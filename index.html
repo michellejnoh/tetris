@@ -12,6 +12,7 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #fff;
     color: #000;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,23 +42,23 @@
   canvas#board { display: block; background: #fff; border: 2px solid #000; }
   canvas#hold, canvas#next { display: block; }
 
-  .title { font-weight: 300; font-size: 34px; letter-spacing: -0.5px; line-height: 1; margin-bottom: 26px; }
+  .title { font-weight: 500; font-size: 34px; letter-spacing: -0.5px; line-height: 1; margin-bottom: 26px; }
   .label {
     font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
     text-transform: uppercase; color: #777; margin-bottom: 8px;
   }
-  .value { font-size: 26px; font-weight: 300; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .value { font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
   .keys b { font-weight: 500; color: #000; }
 
   .overlay {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 14px;
-    background: rgba(255, 255, 255, 0.93);
+    background: rgba(255, 255, 255, 0.8);
     text-align: center; padding: 20px;
   }
   .overlay.hidden { display: none; }
-  .overlay h2 { font-weight: 700; font-size: 30px; letter-spacing: 2px; text-transform: uppercase; }
+  .overlay h2 { font-weight: 500; font-size: 30px; letter-spacing: 2px; text-transform: uppercase; }
   .overlay p { font-size: 13px; color: #555; line-height: 1.7; }
   button {
     font-family: inherit; font-size: 13px; font-weight: 500;
@@ -106,7 +107,7 @@
       <h2 id="ov-title">Tetris</h2>
       <p id="ov-text">
         <span class="desktop-only">Press Enter to start</span>
-        <span class="mobile-only">Tap to rotate · drag to move<br>drag down to drop · flick down to slam<br>swipe up to hold · two-finger tap to rotate back</span>
+        <span class="mobile-only">Tap to rotate, drag to move<br>Drag down to drop, flick down to slam<br>Swipe up to hold<br>Two-finger tap to rotate back</span>
       </p>
       <button id="ov-btn">Start</button>
     </div>
@@ -125,13 +126,13 @@
   </div>
 
   <div class="keys">
-    <b>← →</b> move<br>
-    <b>↓</b> soft drop<br>
-    <b>space</b> hard drop<br>
-    <b>↑ / X</b> rotate right<br>
-    <b>Z / ctrl</b> rotate left<br>
-    <b>C / shift</b> hold<br>
-    <b>esc / P</b> pause
+    <b>Left / Right</b> move<br>
+    <b>Down</b> soft drop<br>
+    <b>Space</b> hard drop<br>
+    <b>Up / X</b> rotate right<br>
+    <b>Z / Ctrl</b> rotate left<br>
+    <b>C / Shift</b> hold<br>
+    <b>Esc / P</b> pause
   </div>
 
   <button id="pause-btn">Pause</button>
@@ -209,6 +210,7 @@ const holdC = $('hold'), hctx = holdC.getContext('2d');
 const nextC = $('next'), nctx = nextC.getContext('2d');
 const wrap = $('wrap'), overlay = $('overlay');
 const ovTitle = $('ov-title'), ovText = $('ov-text'), ovBtn = $('ov-btn'), pauseBtn = $('pause-btn');
+const GREY = '#8E8E8E';
 const FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
 let CELL = 30, NS = 20, compact = false;
@@ -723,8 +725,7 @@ function draw() {
     for (let i = 0; i < n; i++) {
       const y = ROWS - 1 - i;
       for (let x = 0; x < COLS; x++) {
-        ctx.fillStyle = grid[y][x] ? '#9a9a9a' : 'rgba(0,0,0,0.04)';
-        ctx.fillRect(x * CELL + 1, vy(y) + 1, CELL - 2, CELL - 2);
+        if (grid[y][x]) block(ctx, x * CELL, vy(y), CELL, GREY);
       }
     }
   }
@@ -752,7 +753,7 @@ function draw() {
 function bigText(text, y, size, alpha) {
   ctx.save();
   ctx.globalAlpha = Math.max(0, alpha);
-  ctx.font = `700 ${size}px ${FONT}`;
+  ctx.font = `500 ${size}px ${FONT}`;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.lineJoin = 'round';
   ctx.lineWidth = Math.max(3, size * 0.22);
