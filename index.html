@@ -70,6 +70,10 @@
     background: #000; color: #fff; border: none;
     padding: 12px 22px; cursor: pointer;
   }
+  .drag-setting { display: none; align-items: center; gap: 6px; font-size: 11px; margin-top: 4px; }
+  .drag-setting .ds-label { white-space: nowrap; letter-spacing: 1px; text-transform: uppercase; color: #777; margin-right: 4px; }
+  .drag-setting .ds-btn { background: #fff; color: #000; border: 1.5px solid #000; padding: 6px 9px; font-size: 11px; letter-spacing: 0.5px; text-transform: none; }
+  .drag-setting .ds-btn.on { background: #000; color: #fff; }
   #pause-btn { display: none; background: none; color: #000; border: 1.5px solid #000; padding: 7px 10px; font-size: 11px; }
   .mobile-only { display: none; }
 
@@ -90,6 +94,7 @@
     .title, .keys, .desktop-only, .actions a { display: none; }
     .mobile-only { display: block; }
     #pause-btn { display: block; }
+    .drag-setting { display: flex; }
     .actions { margin: 0; justify-self: end; align-self: center; }
     .stats { flex-direction: row; gap: 16px; margin: 0; align-self: center; }
     .stats .label { font-size: 9px; margin-bottom: 2px; letter-spacing: 1px; }
@@ -131,6 +136,7 @@
       <p id="ov-text"></p>
       <button id="ov-btn">Start</button>
       <a href="skills.html" id="ov-link">Learn the skills</a>
+      <div class="drag-setting" id="drag-setting"></div>
     </div>
   </div>
 
@@ -389,6 +395,7 @@ function shake(ms, amp) { shakeT = Math.max(shakeT, ms); shakeAmp = Math.max(sha
 function showOverlay(title, html, btn, link = true) {
   ovTitle.textContent = title; ovText.innerHTML = html; ovBtn.textContent = btn;
   ovLink.style.display = link ? '' : 'none';
+  renderDragSetting($('drag-setting'));
   overlay.classList.remove('hidden');
 }
 
@@ -614,19 +621,20 @@ function act(a) {
   updateStats();
 }
 
+// Physical keys (e.code), so Z / X / C still work when the keyboard is set to Korean or another language.
 const KEYMAP = {
   ArrowLeft: 'left', ArrowRight: 'right', ArrowDown: 'soft',
-  ArrowUp: 'cw', x: 'cw', X: 'cw',
-  z: 'ccw', Z: 'ccw', Control: 'ccw',
-  ' ': 'drop', c: 'hold', C: 'hold', Shift: 'hold',
+  ArrowUp: 'cw', KeyX: 'cw',
+  KeyZ: 'ccw', ControlLeft: 'ccw', ControlRight: 'ccw',
+  Space: 'drop', KeyC: 'hold', ShiftLeft: 'hold', ShiftRight: 'hold',
 };
 
 document.addEventListener('keydown', e => {
-  const a = KEYMAP[e.key];
+  const a = KEYMAP[e.code];
   if (a) e.preventDefault();
   if (e.repeat) return;
-  if (e.key === 'Escape' || e.key === 'p' || e.key === 'P' || e.key === 'F1') { e.preventDefault(); togglePause(); return; }
-  if (e.key === 'Enter') {
+  if (e.code === 'Escape' || e.code === 'KeyP' || e.code === 'F1') { e.preventDefault(); togglePause(); return; }
+  if (e.code === 'Enter' || e.code === 'NumpadEnter') {
     if (state === 'paused') togglePause();
     else if (state === 'idle' || (state === 'over' && !overlay.classList.contains('hidden'))) start();
     return;
@@ -641,7 +649,7 @@ document.addEventListener('keydown', e => {
 });
 
 document.addEventListener('keyup', e => {
-  const a = KEYMAP[e.key];
+  const a = KEYMAP[e.code];
   if (a === 'left' || a === 'right') {
     heldKeys[a] = false;
     dasDir = heldKeys.left ? -1 : heldKeys.right ? 1 : 0;
@@ -658,7 +666,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 ovBtn.addEventListener('click', () => { state === 'paused' ? togglePause() : start(); });
-overlay.addEventListener('click', e => { if (e.target === overlay || e.target.closest('h2, p')) ovBtn.click(); });
+overlay.addEventListener('click', e => { if (e.target.closest('.drag-setting')) return; if (e.target === overlay || e.target.closest('h2, p')) ovBtn.click(); });
 pauseBtn.addEventListener('click', togglePause);
 
 // ---------- Input: touch ----------
@@ -676,6 +684,7 @@ attachTouch({
 
 window.addEventListener('resize', sizeCanvases);
 ovText.innerHTML = START_TEXT;
+renderDragSetting($('drag-setting'));
 sizeCanvases();
 requestAnimationFrame(frame);
 </script>

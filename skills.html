@@ -7,38 +7,13 @@
 <title>Tetris Skills Course</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
   body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 500;
-    background: #fff; color: #000;
+    font-weight: 500; background: #fff; color: #000;
     -webkit-user-select: none; user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
   a { color: inherit; }
-
-  .page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
-  header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
-  h1 { font-weight: 500; font-size: 34px; letter-spacing: -0.5px; }
-  header a { font-size: 13px; text-decoration: none; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
-
-  .tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
-  .tab {
-    font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
-    background: #fff; color: #000; border: 1.5px solid #000;
-    padding: 8px 12px; cursor: pointer; text-transform: none;
-  }
-  .tab.active { background: #000; color: #fff; }
-  .tab .check { margin-left: 6px; }
-
-  .lesson { display: grid; grid-template-columns: 1fr auto; gap: 36px; align-items: start; }
-  .info .num { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 8px; }
-  .info h2 { font-weight: 500; font-size: 28px; letter-spacing: -0.3px; margin-bottom: 14px; }
-  .info .why { font-size: 15px; line-height: 1.6; color: #333; margin-bottom: 18px; }
-  .info .label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin: 18px 0 6px; }
-  .info .how { font-size: 14px; line-height: 1.7; }
-  .info .goal { font-size: 16px; line-height: 1.5; border-left: 3px solid #000; padding-left: 12px; }
-  .buttons { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
   button {
     font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 1px;
     text-transform: uppercase; background: #000; color: #fff; border: 1.5px solid #000;
@@ -46,49 +21,80 @@
   }
   button.ghost { background: #fff; color: #000; }
   button:disabled { opacity: 0.3; cursor: default; }
-  .msg { margin-top: 18px; font-size: 14px; line-height: 1.6; min-height: 46px; }
-  .msg.ok { color: #000; }
+
+  .page { max-width: 1120px; margin: 0 auto; padding: 28px 24px 40px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 26px; }
+  h1 { font-weight: 500; font-size: 34px; letter-spacing: -0.5px; }
+  .progress { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #777; margin-left: auto; }
+  header a { font-size: 13px; text-decoration: none; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
+
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: start; }
+
+  .menu .chapter { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin: 18px 0 6px; }
+  .menu .chapter:first-child { margin-top: 0; }
+  .menu .item {
+    display: flex; justify-content: space-between; align-items: center; width: 100%;
+    background: #fff; color: #000; border: none; border-left: 2px solid transparent;
+    padding: 7px 0 7px 10px; font-size: 13px; letter-spacing: 0; text-transform: none; text-align: left;
+  }
+  .menu .item.active { border-left-color: #000; }
+  .st { display: inline-block; width: 8px; height: 8px; margin-left: 3px; background: #000; vertical-align: 1px; }
+  .st.off { background: #fff; box-shadow: inset 0 0 0 1.5px #c8c8c8; }
+  .stars-line .st { margin: 0 8px 0 0; }
+  .menu select { display: none; }
+
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: start; }
+  .info .num { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 8px; }
+  .info h2 { font-weight: 500; font-size: 28px; letter-spacing: -0.3px; margin-bottom: 6px; }
+  .info .term { font-size: 13px; color: #777; margin-bottom: 14px; }
+  .info .why { font-size: 15px; line-height: 1.6; color: #333; }
+  .info .why p + p { margin-top: 10px; }
+  .info .label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin: 18px 0 6px; }
+  .info .goal { font-size: 16px; line-height: 1.5; border-left: 3px solid #000; padding-left: 12px; }
+  .info .how { font-size: 14px; line-height: 1.7; }
+  .info .stars-line { font-size: 13px; line-height: 1.8; color: #555; }
+  .info .stars-line b { color: #000; font-weight: 500; }
+  .buttons { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .msg { margin-top: 16px; font-size: 14px; line-height: 1.6; min-height: 44px; }
   .msg.no { color: #8C3B57; }
 
   .play { display: flex; gap: 14px; align-items: flex-start; }
   .board-wrap { position: relative; touch-action: none; }
   canvas#board { display: block; border: 2px solid #000; background: #fff; }
-  .side { display: flex; flex-direction: column; gap: 14px; }
+  .side { display: flex; flex-direction: column; gap: 14px; width: 84px; }
   .side .label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 4px; }
-  #hold-box { border: 1.5px solid #000; padding: 6px 4px 4px; text-align: center; }
-  #hold-box .label { margin-bottom: 2px; }
+  #hold-box { border: 1.5px solid #000; padding: 6px 2px 4px; text-align: center; }
   canvas#hold, canvas#next { display: block; margin: 0 auto; }
-  .caption {
-    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none;
-  }
-  .caption span {
-    display: inline-block; background: #000; color: #fff; font-size: 12px; letter-spacing: 1px;
-    text-transform: uppercase; padding: 6px 10px;
-  }
+  .hud .v { font-size: 20px; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+  .caption { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none; }
+  .caption span { display: inline-block; background: #000; color: #fff; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 6px 10px; }
   .caption:empty { display: none; }
-  .touch-only { display: none; }
 
-  @media (max-width: 700px), (pointer: coarse) {
-    body { touch-action: manipulation; }
-    .play { touch-action: none; }
-    .page { padding: calc(env(safe-area-inset-top) + 10px) 10px 10px; }
+  @media (max-width: 760px), (pointer: coarse) {
+    .page { padding: calc(env(safe-area-inset-top) + 10px) 10px 24px; }
     header { margin-bottom: 10px; }
     h1 { font-size: 20px; }
-    .tabs { gap: 6px; margin-bottom: 10px; flex-wrap: nowrap; }
-    .tab { padding: 6px 9px; }
-    .tab .name { display: none; }
-    .lesson { grid-template-columns: 1fr; gap: 10px; }
-    .info .num, .info .label.how-label { display: none; }
-    .info .why { font-size: 13px; line-height: 1.5; margin-bottom: 10px; color: #444; }
-    .info h2 { font-size: 18px; margin-bottom: 6px; }
-    .info .goal { font-size: 13px; padding-left: 8px; }
-    .info .how { font-size: 12px; color: #555; margin-top: 6px; }
-    .buttons { margin-top: 8px; }
-    button { padding: 7px 10px; font-size: 11px; }
-    .msg { margin-top: 6px; font-size: 12px; min-height: 36px; }
-    .play { justify-content: center; order: -1; }
-    .keys-only { display: none; }
-    .touch-only { display: inline; }
+    .progress { font-size: 10px; }
+    .layout { grid-template-columns: 1fr; gap: 10px; }
+    .menu .chapter, .menu .item { display: none; }
+    .menu select {
+      display: block; width: 100%; font-family: inherit; font-size: 15px; font-weight: 500;
+      padding: 9px 10px; border: 1.5px solid #000; border-radius: 0; background: #fff; color: #000;
+      -webkit-appearance: none; appearance: none;
+    }
+    .main { grid-template-columns: 1fr; gap: 12px; }
+    .play { order: -1; justify-content: center; touch-action: none; }
+    .side { width: auto; }
+    .info .num { display: none; }
+    .info h2 { font-size: 20px; }
+    .info .term { margin-bottom: 8px; font-size: 12px; }
+    .info .why { font-size: 13px; line-height: 1.55; }
+    .info .goal { font-size: 14px; }
+    .info .how { font-size: 13px; }
+    .info .label { margin: 12px 0 4px; font-size: 10px; }
+    .buttons { margin-top: 12px; }
+    button { padding: 8px 11px; font-size: 11px; }
+    .msg { font-size: 13px; margin-top: 10px; min-height: 36px; }
   }
 </style>
 </head>
@@ -96,338 +102,783 @@
 <div class="page">
   <header>
     <h1>Skills course</h1>
+    <span class="progress" id="progress"></span>
     <a href="index.html">Play Tetris</a>
   </header>
 
-  <nav class="tabs" id="tabs"></nav>
+  <div class="layout">
+    <nav class="menu" id="menu"></nav>
 
-  <section class="lesson">
-    <div class="info">
-      <div class="num" id="num"></div>
-      <h2 id="title"></h2>
-      <p class="why" id="why"></p>
-      <div class="label">Goal</div>
-      <p class="goal" id="goal"></p>
-      <div class="label how-label">How</div>
-      <p class="how" id="how"></p>
-      <div class="buttons">
-        <button id="demo-btn" class="ghost">Show me</button>
-        <button id="reset-btn" class="ghost">Restart</button>
-        <button id="next-btn">Next lesson</button>
+    <section class="main">
+      <div class="info">
+        <div class="num" id="num"></div>
+        <h2 id="title"></h2>
+        <div class="term" id="term"></div>
+        <div class="why" id="why"></div>
+        <div class="label">Goal</div>
+        <p class="goal" id="goal"></p>
+        <div class="label">How</div>
+        <p class="how" id="how"></p>
+        <div class="label">Stars</div>
+        <p class="stars-line" id="stars-line"></p>
+        <div class="buttons">
+          <button id="demo-btn" class="ghost">Show me</button>
+          <button id="reset-btn" class="ghost">Restart</button>
+          <button id="next-btn">Next</button>
+        </div>
+        <p class="msg" id="msg"></p>
       </div>
-      <p class="msg" id="msg"></p>
-    </div>
 
-    <div class="play">
-      <div class="board-wrap">
-        <canvas id="board"></canvas>
-        <div class="caption" id="caption"></div>
-      </div>
-      <div class="side">
-        <div id="hold-box">
-          <div class="label">Hold</div>
-          <canvas id="hold"></canvas>
+      <div class="play">
+        <div class="board-wrap">
+          <canvas id="board"></canvas>
+          <div class="caption" id="caption"></div>
         </div>
-        <div>
-          <div class="label">Next</div>
-          <canvas id="next"></canvas>
+        <div class="side">
+          <div id="hold-box"><div class="label">Hold</div><canvas id="hold"></canvas></div>
+          <div><div class="label">Next</div><canvas id="next"></canvas></div>
+          <div class="hud" id="hud"></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </div>
 
 <script src="core.js"></script>
 <script>
-// ---------- Lessons ----------
-// Boards are the 10 visible rows, top to bottom.  x = block, * = target spot (empty), . = empty
+// =====================================================================
+//  Lessons
+//  Boards list the visible rows top to bottom:  x = block, * = target spot, . = empty
+//  Every board and demo here was checked with a solver that runs these same rules.
+// =====================================================================
 const E = '..........';
+const W4 = 'xxxxxx....';
+const CHAPTERS = [
+  { name: 'Foundations', ko: '기본기' },
+  { name: 'T-spins', ko: 'T스핀' },
+  { name: 'Attack', ko: '공격' },
+  { name: 'Openers', ko: '빌드' },
+];
+
 const LESSONS = [
+  // ---------------- Foundations ----------------
   {
-    name: 'Move & drop',
-    skill: 'Ghost piece and hard drop',
-    why: 'The dashed outline under your piece is the ghost: it shows exactly where the piece will land. Line the ghost up with the gap, then hard drop so the piece lands instantly.',
-    keys: '<b>Left / Right</b> to move, <b>Space</b> to hard drop.',
+    ch: 0, name: 'Ghost & hard drop', term: '하드 드롭 · 고스트',
+    why: ['The dashed outline under your piece is the ghost: it shows exactly where the piece will land. Experts never watch the falling piece. They line up the ghost and hard drop, which places the piece instantly.'],
+    keys: '<b>Left / Right</b> move, <b>Space</b> hard drop.',
     touch: 'Drag sideways to move, flick down to drop.',
     goal: 'Drop the O piece into the marked gap.',
     board: [E, E, E, E, E, E, E, E, 'xxxxxx**xx', 'xxxxxx**xx'],
-    pieces: ['O'],
-    check: 'target',
+    pieces: ['O'], check: 'target',
     demo: ['right', 'right', 'drop'],
-    win: 'Two lines cleared. Always look at the ghost, not the piece.',
+    win: 'Two lines. Look at the ghost, not the piece.',
   },
   {
-    name: 'Rotate left',
-    skill: 'Rotating both ways',
-    why: 'Pieces turn both ways. Turning right three times is the same as turning left once, but it takes three presses and wastes time. Good players pick the shorter turn.',
-    keys: '<b>Up / X</b> rotates right, <b>Z</b> rotates left.',
-    touch: 'Tap to rotate right, tap with two fingers to rotate left.',
-    goal: 'Fit the L into the marked spot using only one rotation.',
+    ch: 0, name: 'Rotate both ways', term: '역회전',
+    why: ['Every piece turns both ways. Three right turns equal one left turn, but cost three presses. Using both rotate keys is the first step towards fast, clean play.'],
+    keys: '<b>Up / X</b> rotate right, <b>Z</b> rotate left.',
+    touch: 'Tap to rotate right, two-finger tap to rotate left.',
+    goal: 'Fit the L into the marked spot with only one rotation.',
     board: [E, E, E, E, E, E, E, '**........', 'x*xxxxxxxx', 'x*xxxxxxxx'],
-    pieces: ['L'],
-    check: 'target',
-    maxRotations: 1,
+    pieces: ['L'], check: 'target', maxRotations: 1,
     demo: ['ccw', 'left', 'left', 'left', 'drop'],
-    win: 'One press instead of three. That saved time adds up fast at higher levels.',
+    win: 'One press instead of three.',
   },
   {
-    name: 'Hold',
-    skill: 'Saving a piece for later',
-    why: 'Hold puts the current piece aside and gives you the next one. You can swap once per piece. Use it when the piece you have doesn\'t fit but one in the Next queue does.',
-    keys: '<b>C</b> or <b>Shift</b> to hold.',
+    ch: 0, name: 'Hold', term: '홀드',
+    why: ['Hold sets the current piece aside and gives you the next one. You can swap once per piece. Use it to save an I for your Tetris well, or a T for your T-spin slot.'],
+    keys: '<b>C</b> or <b>Shift</b> hold.',
     touch: 'Tap the Hold box, or flick up.',
     goal: 'Score a Tetris (4 lines at once) with the first piece you place.',
     board: [E, E, E, E, E, E, 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.'],
-    pieces: ['S', 'I'],
-    check: 'tetris',
+    pieces: ['S', 'I'], check: 'tetrisFirst',
     demo: ['hold', 'cw', 'right', 'right', 'right', 'right', 'drop'],
-    win: 'TETRIS! Keeping one column open for an I piece is the classic way to score big.',
+    win: 'TETRIS. Keeping one column open for the I is the classic way to score.',
   },
   {
-    name: 'Tuck',
-    skill: 'Soft drop and slide',
-    why: 'A hard drop locks the piece at once. A soft drop lowers it and lets you keep moving, so you can slide it sideways into a space under an overhang before it locks.',
-    keys: '<b>Down</b> to soft drop, then <b>Left / Right</b>, then <b>Space</b> to lock.',
+    ch: 0, name: 'Tuck', term: '턱 넣기 · 소프트 드롭',
+    why: ['A hard drop locks the piece at once. A soft drop lowers it and keeps it moving, so you can slide it sideways under a ledge before it locks. In the real game you have half a second after landing.'],
+    keys: '<b>Down</b> soft drop, then <b>Left / Right</b>, then <b>Space</b> to lock.',
     touch: 'Slide down slowly, drag sideways, then flick down to lock.',
     goal: 'Get the O piece into the marked space under the ledge.',
     board: [E, E, E, E, E, E, E, 'xxxxxx....', 'xxxx**....', 'xxxx**....'],
-    pieces: ['O'],
-    check: 'target',
+    pieces: ['O'], check: 'target',
     demo: ['right', 'right', 'softmax', 'left', 'left', 'drop'],
-    win: 'Tucked. In the real game you have about half a second after landing to do this.',
+    fail: 'It locked before getting under the ledge. Soft drop to the floor first, then slide in.',
+    win: 'Tucked. This move is also how T-spins get into their slots.',
   },
   {
-    name: 'T-spin double',
-    skill: 'Spinning into a slot',
-    why: 'When a T piece can\'t drop straight into a slot, rotate it at the bottom and it will kick into place. That is a T-spin. A T-spin that clears two lines scores 1,200 points, more than a Triple.',
-    keys: '<b>Z</b> to point the T left, <b>Down</b> to the bottom, then <b>Z</b> again to spin it in.',
-    touch: 'Two-finger tap, slide down, two-finger tap again, then flick down.',
+    ch: 0, name: 'Finesse drill', term: '최소조작 (Finesse)', drill: 'finesse',
+    why: ['Finesse means placing every piece with the fewest possible key presses. Top players learn the shortest input for every spot by heart, because extra presses cost time and cause misdrops.',
+          'Holding Left or Right slides the piece all the way to the wall (DAS). That counts as one input, so a spot next to the wall is often only one press away.'],
+    keys: 'Move and rotate with as few presses as you can. Holding a direction to reach the wall counts as one press.',
+    touch: 'Each drag, tap or flick counts as one input. Finesse is mostly a keyboard skill, but you can still practise.',
+    goal: 'Place 12 pieces on their outlines using the fewest inputs.',
+    stars: ['Finish all 12', '9 or more perfect', 'All 12 perfect'],
+  },
+
+  // ---------------- T-spins ----------------
+  {
+    ch: 1, name: 'T-spin mini', term: 'T스핀 미니',
+    why: ['A T-spin is a T piece that rotates into place with at least three of the four corners around its centre blocked. If the two corners on the side the T points to aren\'t both blocked, it only counts as a mini.',
+          'A mini scores more than a plain single, but the real prize is the full T-spin.'],
+    keys: 'Move the T to the left wall, <b>Down</b> to the floor, then <b>Up</b> to spin it in.',
+    touch: 'Drag to the left wall, slide down, then tap.',
+    goal: 'Clear a line with a T-spin mini.',
+    board: [E, E, E, E, E, E, E, E, '.xxxxxxxxx', '..xxxxxxxx'],
+    pieces: ['T'], check: 'spin', spin: 'mini', lines: 1,
+    demo: ['left', 'left', 'left', 'softmax', 'cw', 'drop'],
+    hints: { plain: 'That was a plain drop. Take the T to the floor first, then rotate right.', other: 'Close. Rotate right once the T is sitting on the floor against the wall.' },
+    win: 'MINI T-SPIN. Now for the full version.',
+  },
+  {
+    ch: 1, name: 'T-spin single', term: 'T스핀 싱글 (TSS)',
+    why: ['A full T-spin that clears one line is a T-spin single. Here the middle row has a hole elsewhere, so only one row clears, but the spin still scores 800 points, eight times a plain single.',
+          'The trick is to rotate the T into the slot from under the overhang, not to drop it in.'],
+    keys: '<b>Z</b> to point the T left, <b>Down</b> to the bottom, then <b>Z</b> again.',
+    touch: 'Two-finger tap, slide down, two-finger tap again, flick down.',
+    goal: 'Spin the T into the slot for a T-spin single.',
+    board: [E, E, E, E, E, E, E, 'xxx..xxxxx', 'xxx...xxx.', 'xxxx.xxxxx'],
+    pieces: ['T'], check: 'spin', spin: 'full', lines: 1,
+    demo: ['ccw', 'softmax', 'ccw', 'drop'],
+    hints: { plain: 'That was a plain drop, not a spin. Point the T left, soft drop, then rotate left again.', other: 'It spun, but not into the slot. Point the T left first, then rotate left once more at the bottom.' },
+    win: 'T-SPIN SINGLE.',
+  },
+  {
+    ch: 1, name: 'T-spin double', term: 'T스핀 더블 (TSD)',
+    why: ['The T-spin double is the most important attack in modern Tetris. Six pieces can set one up, while a Tetris needs ten, and it sends the same amount of garbage in battle. Korean players even joke that the game should be renamed "T-spin".',
+          'Look for a slot with a roof over one corner. Lower the T next to the slot pointing at the roof, then rotate towards it.'],
+    keys: '<b>Z</b> to point the T left, <b>Down</b> to the bottom, then <b>Z</b> again.',
+    touch: 'Two-finger tap, slide down, two-finger tap again, flick down.',
     goal: 'Spin the T into the slot and clear two lines.',
     board: [E, E, E, E, E, E, E, 'xxx..xxxxx', 'xxx***xxxx', 'xxxx*xxxxx'],
-    pieces: ['T'],
-    check: 'tsd',
+    pieces: ['T'], check: 'spin', spin: 'full', lines: 2,
     demo: ['ccw', 'softmax', 'ccw', 'drop'],
-    win: 'T-SPIN DOUBLE. Look for slots with a roof over one corner: that is where a T-spin goes.',
+    hints: { plain: 'That was a plain drop, not a spin. Point the T left, soft drop to the bottom, then rotate left again.', other: 'It spun, but not into the slot. Point the T left first, then rotate left once more at the very bottom.' },
+    win: 'T-SPIN DOUBLE. 1,200 points, more than a Triple.',
   },
   {
-    name: 'Perfect clear',
-    skill: 'Planning with the Next queue',
-    why: 'The Next queue shows what is coming, so you can plan several pieces ahead. Clear every block on the board and you get a huge Perfect Clear bonus.',
+    ch: 1, name: 'T-spin triple', term: 'T스핀 트리플 (TST)',
+    why: ['A T-spin triple uses the deepest kick in the rotation system: from flat, the T drops two rows while turning upright. It needs a deep, narrow hole with a roof on one side.',
+          'Slide the T flat under the roof, then rotate towards the hole. The T falls straight down into it.'],
+    keys: 'Move left, <b>Down</b> to the floor, <b>Right</b> under the roof, then <b>Z</b>.',
+    touch: 'Drag left, slide down, drag right under the roof, two-finger tap.',
+    goal: 'Clear three lines with a T-spin triple.',
+    board: [E, E, E, E, E, '.....xxxxx', '......xxxx', 'xxxxx*xxxx', 'xxxx**xxxx', 'xxxxx*xxxx'],
+    pieces: ['T'], check: 'spin', spin: 'full', lines: 3,
+    demo: ['left', 'softmax', 'right', 'ccw', 'drop'],
+    hints: { plain: 'That was a plain drop. Get the T lying flat under the roof first, then rotate left.', other: 'Not deep enough. The T must be flat and touching the roof before you rotate left.' },
+    win: 'T-SPIN TRIPLE. 1,600 points, the biggest single move in the game.',
+  },
+  {
+    ch: 1, name: 'T-spin drill', term: 'T스핀 연습', drill: 'tspin',
+    why: ['Real games don\'t hand you the same slot twice. This drill builds ten random T-spin singles, doubles and triples on either side of the board. Spot the slot type, then spin in.'],
+    keys: 'All keys work. The Slot box next to the board tells you which T-spin to do.',
+    touch: 'All gestures work.',
+    goal: 'Hit 10 random T-spins. A plain drop or the wrong spin counts as a miss.',
+    stars: ['Finish all 10', '8 or more hits', '10 hits in under 90 seconds'],
+  },
+
+  // ---------------- Attack ----------------
+  {
+    ch: 2, name: 'Back-to-back', term: '백투백 (B2B)',
+    why: ['Tetrises and T-spins are "difficult" clears. Do two in a row, with no plain clear in between, and the second one is a back-to-back: worth 1.5 times the points (and an extra garbage line in battle).',
+          'Here the I comes first, but taking the Tetris now would bury the T-spin slot. Hold the I, spin the T, then bring the I back.'],
+    keys: '<b>C</b> to hold, T-spin with <b>Z</b>, then hold again to swap the I back in.',
+    touch: 'Tap Hold, spin the T, then tap Hold again.',
+    goal: 'Do a T-spin double, then a Tetris, back-to-back.',
+    board: [E, E, E, 'xxx..xxxx.', 'xxx...xxxx', 'xxxx.xxxxx', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.'],
+    pieces: ['I', 'T', 'O'], check: 'seq',
+    seq: [
+      { ts: 'full', lines: 2, fail: 'The first clear must be the T-spin double. Hold the I so the T comes out first.' },
+      { lines: 4, b2b: true, fail: 'Now the Tetris: hold the O to get your I back, and drop it in the right-hand well.' },
+    ],
+    demo: ['hold', 'ccw', 'softmax', 'ccw', 'drop', 'hold', 'cw', 'right', 'right', 'right', 'right', 'drop'],
+    win: 'BACK-TO-BACK TETRIS. Chaining difficult clears is how experts multiply their attack.',
+  },
+  {
+    ch: 2, name: 'Combo (REN)', term: '렌 (REN) · 콤보',
+    why: ['A combo, called REN in Japan and Korea, is clearing lines with several pieces in a row. The first clear starts the chain, and every clear after it adds 1 to the combo.',
+          'This board is a 4-wide well: a gap four columns wide next to a tall stack. Every piece can clear a line if you keep three blocks at the bottom of the well.'],
+    keys: 'Place each piece so it finishes a row.',
+    touch: 'Place each piece so it finishes a row.',
+    goal: 'Clear a line with all 7 pieces in a row (6 combo).',
+    board: [E, E, W4, W4, W4, W4, W4, W4, W4, 'xxxxxxxx.x'],
+    pieces: ['T', 'I', 'L', 'J', 'S', 'O', 'Z'], check: 'ren', ren: 7,
+    demo: ["right","right","right","right","soft","soft","soft","soft","soft","soft","soft","soft","cw","drop","soft","soft","cw","soft","soft","soft","soft","cw","drop","right","right","soft","soft","soft","cw","drop","right","right","right","soft","soft","soft","soft","soft","soft","soft","cw","soft","cw","drop","right","right","soft","soft","soft","soft","soft","cw","drop","right","right","right","right","drop","right","right","right","soft","soft","soft","soft","soft","soft","soft","soft","cw","drop"],
+    fail: 'That piece didn\'t clear a line, so the combo broke. Keep exactly three blocks in the well.',
+    win: '6 COMBO. In battle, long combos send a pile of garbage even without Tetrises.',
+  },
+  {
+    ch: 2, name: 'Perfect clear', term: '퍼펙트 클리어 (퍼클)',
+    why: ['Clear every block on the board and you get a Perfect Clear, the biggest bonus in the game. It takes planning: you have to see where the next few pieces go before you place the first one.'],
     keys: 'Check the Next queue before each move.',
     touch: 'Check the Next queue before each move.',
     goal: 'Use the three pieces to clear the whole board.',
-    board: [E, E, E, E, E, E, E, 'xxxxxx....', 'xxxxxx....', 'xxxxxx....'],
-    pieces: ['I', 'L', 'L'],
-    check: 'pc',
+    board: [E, E, E, E, E, E, E, W4, W4, W4],
+    pieces: ['I', 'L', 'L'], check: 'pc',
     demo: ['right', 'right', 'right', 'drop', 'right', 'right', 'right', 'right', 'drop', 'cw', 'cw', 'right', 'right', 'right', 'drop'],
-    win: 'PERFECT CLEAR. Nothing left on the board.',
+    win: 'PERFECT CLEAR.',
+  },
+  {
+    ch: 2, name: 'Perfect clear puzzle', term: '퍼클 퍼즐',
+    why: ['Harder: a 4×4 gap and four pieces, with only two ways to solve it. The last piece has to spin into place, so plan the whole thing before you start.',
+          'Spins aren\'t only for T pieces. S, Z, L and J pieces can also rotate into tight spots using the same kicks.'],
+    keys: 'Plan all four pieces first. The last one needs a spin.',
+    touch: 'Plan all four pieces first. The last one needs a spin.',
+    goal: 'Clear the whole board with J, L, S and Z.',
+    board: [E, E, E, E, E, E, W4, W4, W4, W4],
+    pieces: ['J', 'L', 'S', 'Z'], check: 'pc',
+    demo: ["right","right","soft","soft","soft","soft","soft","cw","drop","right","right","right","soft","soft","soft","soft","soft","soft","ccw","right","drop","right","right","right","right","drop","right","right","soft","soft","soft","soft","soft","soft","soft","ccw","right","ccw","drop"],
+    win: 'PERFECT CLEAR, finished with a Z-spin.',
+  },
+  {
+    ch: 2, name: '4-wide combo drill', term: '4와이드 렌', drill: 'combo',
+    why: ['An endless 4-wide well with random pieces. Keep the combo going as long as you can, and use Hold to save pieces that don\'t fit right now.',
+          'Tip: the three leftover blocks should always make a shape the next piece can finish a row with.'],
+    keys: 'All keys work, including Hold.',
+    touch: 'All gestures work, including Hold.',
+    goal: 'Build the longest combo you can.',
+    stars: ['4 combo', '8 combo', '12 combo'],
+  },
+
+  // ---------------- Openers ----------------
+  {
+    ch: 3, name: 'Opener TSD', term: '개막TSD',
+    why: ['An opener is a fixed way to stack your first bag of seven pieces. Experts memorise a few so they can attack within seconds. This one uses L, J, I, O, S and Z to build a T-spin double slot, then spins the T in.',
+          'Each piece has an outline to match. Watch how the S becomes the roof of the slot.'],
+    keys: 'Place each piece on its outline, then T-spin.',
+    touch: 'Place each piece on its outline, then T-spin.',
+    goal: 'Build the opener and finish with a T-spin double.',
+    board: [E, E, E, E, E, E, E, E, E, E],
+    pieces: ['L', 'J', 'I', 'O', 'S', 'Z', 'T'], check: 'build',
+    guide: [
+      [[3, 9], [3, 10], [3, 11], [4, 11]],
+      [[2, 9], [2, 10], [1, 11], [2, 11]],
+      [[6, 11], [7, 11], [8, 11], [9, 11]],
+      [[8, 9], [9, 9], [8, 10], [9, 10]],
+      [[6, 8], [6, 9], [7, 9], [7, 10]],
+      [[1, 9], [0, 10], [1, 10], [0, 11]],
+    ],
+    finish: { ts: 'full', lines: 2 },
+    demo: ['cw', 'left', 'drop', 'ccw', 'left', 'left', 'drop', 'right', 'right', 'right', 'drop', 'right', 'right', 'right', 'right', 'drop',
+           'cw', 'right', 'right', 'drop', 'ccw', 'left', 'left', 'left', 'drop', 'cw', 'softmax', 'cw', 'drop'],
+    win: 'OPENER TSD. Seven pieces, 1,200 points, and the leftover stack is still clean.',
   },
 ];
 
 const ACTION_LABEL = {
   left: 'Move left', right: 'Move right', soft: 'Soft drop', softmax: 'Soft drop',
   drop: 'Hard drop', cw: 'Rotate right', ccw: 'Rotate left', hold: 'Hold',
+  wallLeft: 'Hold left (to the wall)', wallRight: 'Hold right (to the wall)',
 };
 
-// ---------- Setup ----------
-const VISIBLE = 10, ROWS = VISIBLE + HIDDEN;
+// =====================================================================
+//  State
+// =====================================================================
 const $ = id => document.getElementById(id);
 const board = $('board'), ctx = board.getContext('2d');
 const holdC = $('hold'), hctx = holdC.getContext('2d');
 const nextC = $('next'), nctx = nextC.getContext('2d');
 const isTouch = window.matchMedia('(pointer: coarse)').matches;
-
-let CELL = 30, NS = 14, compact = false;
-let done = {};
-try { done = JSON.parse(localStorage.getItem('tetris-skills') || '{}'); } catch (e) {}
-
-let li = 0, L;                       // lesson index, lesson
-let grid, targets, queue, piece, holdType, holdUsed;
-let rotations, locks, lastRot, lastKick;
-let status = 'play';                 // play | clearing | won | demo
-let clearRows = [], clearT = 0, popups = [], flashes = [];
-let demoTimer = null, resetTimer = null;
-
 const palette = Object.values(COLOR);
 
+let VISIBLE = 10, ROWS = 12;
+let CELL = 30, NS = 14, compact = false;
+let save = { stars: {}, best: {} };
+try { save = Object.assign(save, JSON.parse(localStorage.getItem('tetris-course') || '{}')); } catch (e) {}
+const persist = () => { try { localStorage.setItem('tetris-course', JSON.stringify(save)); } catch (e) {} };
+
+let li = 0, L;
+let grid = null, targets = [], queue = [], piece = null, holdType = null, holdUsed = false;
+let rotations = 0, inputs = 0, lockIndex = 0, lastRot = false, lastKick = 0, lastDifficult = false, combo = -1, usedDemo = false;
+let status = 'play';          // play | clearing | demo | demo-clearing | done
+let clearRows = [], clearT = 0, popups = [], flashes = [], pendingEv = null;
+let demoTimer = null, resetTimer = null, demoRunning = false;
+let drill = null;
+
+const empty = () => Array(COLS).fill(null);
+
+// =====================================================================
+//  Layout
+// =====================================================================
 function size() {
-  compact = window.matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+  compact = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
   if (compact) {
     const W = window.innerWidth, H = window.innerHeight;
-    // board + side column (about 1.85 cells) + gaps must fit the width
-    CELL = Math.floor(Math.min((W - 48) / 11.85, (H - 230) / VISIBLE));
-    CELL = Math.max(18, Math.min(36, CELL));
-    NS = Math.max(8, Math.round(CELL * 0.42));
+    CELL = Math.floor(Math.min((W - 20 - 14 - 76) / COLS, (H - 150) / VISIBLE));
+    CELL = Math.max(16, Math.min(34, CELL));
   } else {
-    CELL = 32; NS = 16;
+    CELL = Math.max(20, Math.min(32, Math.floor((window.innerHeight - 140) / VISIBLE)));
   }
+  NS = Math.max(8, Math.round(Math.min(CELL * 0.45, 15)));
   setCanvas(board, ctx, COLS * CELL, VISIBLE * CELL);
-  setCanvas(holdC, hctx, 4.4 * NS, 2.4 * NS);
-  setCanvas(nextC, nctx, 4.4 * NS, 3 * 2.8 * NS);
+  setCanvas(holdC, hctx, 4.6 * NS, 2.4 * NS);
+  setCanvas(nextC, nctx, 4.6 * NS, 4 * 2.6 * NS);
   draw();
 }
 
-function renderTabs() {
-  $('tabs').innerHTML = LESSONS.map((l, i) =>
-    `<button class="tab${i === li ? ' active' : ''}" data-i="${i}">${i + 1}<span class="name"> ${l.name}</span>${done[i] ? '<span class="check">✓</span>' : ''}</button>`
-  ).join('');
-  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => openLesson(+b.dataset.i)));
+const starsHtml = n => [0, 1, 2].map(k => `<i class="st${k < n ? '' : ' off'}"></i>`).join('');
+
+function renderMenu() {
+  let html = '', opts = '';
+  CHAPTERS.forEach((c, ci) => {
+    html += `<div class="chapter">${ci + 1}. ${c.name} · ${c.ko}</div>`;
+    opts += `<optgroup label="${ci + 1}. ${c.name} · ${c.ko}">`;
+    LESSONS.forEach((l, i) => {
+      if (l.ch !== ci) return;
+      const s = save.stars[i] || 0;
+      html += `<button class="item${i === li ? ' active' : ''}" data-i="${i}"><span>${l.name}</span><span class="stars">${starsHtml(s)}</span></button>`;
+      opts += `<option value="${i}"${i === li ? ' selected' : ''}>${l.name}  (${s}/3)</option>`;
+    });
+    opts += '</optgroup>';
+  });
+  $('menu').innerHTML = html + `<select id="picker">${opts}</select>`;
+  document.querySelectorAll('.menu .item').forEach(b => b.addEventListener('click', () => openLesson(+b.dataset.i)));
+  $('picker').addEventListener('change', e => openLesson(+e.target.value));
+  const total = Object.values(save.stars).reduce((a, b) => a + b, 0);
+  $('progress').textContent = `${total} / ${LESSONS.length * 3} stars`;
+}
+
+const parOf = l => l.demo ? l.demo.filter(a => a !== 'soft' && a !== 'softmax').length : 0;
+function starRules(l) {
+  if (l.stars) return l.stars;
+  return ['Clear it', 'Clear it without Show me', `Clear it without Show me in ${parOf(l)} inputs or fewer`];
+}
+function renderStarsLine() {
+  const have = save.stars[li] || 0;
+  $('stars-line').innerHTML = starRules(L).map((r, k) => `<i class="st${k < have ? '' : ' off'}"></i>${k < have ? `<b>${r}</b>` : r}`).join('<br>');
 }
 
 function openLesson(i) {
   stopDemo();
   li = i; L = LESSONS[i];
-  $('num').textContent = `Lesson ${i + 1} of ${LESSONS.length} · ${L.skill}`;
+  drill = null;
+  const c = CHAPTERS[L.ch];
+  $('num').textContent = `Chapter ${L.ch + 1} · ${c.name}${L.drill ? ' · Drill' : ''}`;
   $('title').textContent = L.name;
-  $('why').textContent = L.why;
+  $('term').textContent = 'Korean term: ' + L.term;
+  $('why').innerHTML = L.why.map(p => `<p>${p}</p>`).join('');
   $('goal').textContent = L.goal;
   $('how').innerHTML = isTouch ? L.touch : L.keys;
+  renderStarsLine();
   $('next-btn').disabled = i === LESSONS.length - 1;
-  renderTabs();
-  reset();
-  setMsg('');
+  $('demo-btn').disabled = L.drill === 'combo';
+  $('demo-btn').textContent = L.drill ? 'Show this one' : 'Show me';
+  grid = null; piece = null; targets = []; queue = [];
+  VISIBLE = L.drill === 'combo' ? 14 : 10;
+  ROWS = VISIBLE + HIDDEN;
+  usedDemo = false;
+  renderMenu();
+  size();
+  setMsg(L.drill === 'finesse' && isTouch ? 'Tip: here finesse is scored on gestures. It is mostly a keyboard skill.' : '');
+  if (L.drill) startDrill(); else reset();
+}
+
+function award(n) {
+  if (n > (save.stars[li] || 0)) { save.stars[li] = n; persist(); }
+  renderMenu();
+  renderStarsLine();
+}
+
+// =====================================================================
+//  Board setup
+// =====================================================================
+function gridFrom(rows) {
+  const g = [], t = [];
+  const pad = ROWS - rows.length;
+  for (let y = 0; y < pad; y++) g.push(empty());
+  rows.forEach((row, ry) => {
+    const y = ry + pad;
+    g.push([...row].map((ch, x) => ch === 'x' ? palette[(x * 3 + y * 5) % palette.length] : null));
+    [...row].forEach((ch, x) => { if (ch === '*') t.push([x, y]); });
+  });
+  return { g, t };
 }
 
 function reset() {
   clearTimeout(resetTimer); resetTimer = null;
-  grid = []; targets = [];
-  for (let y = 0; y < HIDDEN; y++) grid.push(Array(COLS).fill(null));
-  L.board.forEach((row, ry) => {
-    const y = ry + HIDDEN;
-    grid.push([...row].map((ch, x) => ch === 'x' ? palette[(x * 3 + y * 5) % palette.length] : null));
-    [...row].forEach((ch, x) => { if (ch === '*') targets.push([x, y]); });
-  });
+  const b = gridFrom(L.board);
+  grid = b.g; targets = b.t;
   queue = [...L.pieces];
   holdType = null; holdUsed = false;
-  rotations = 0; locks = 0;
+  rotations = 0; inputs = 0; lockIndex = 0;
+  lastDifficult = false; combo = -1;
   popups = []; flashes = []; clearRows = [];
   status = 'play';
+  if (L.check === 'build') targets = guideCells(0);
   spawn();
 }
+
+// guide cells are written for a 12-row grid (2 hidden + 10 visible)
+const guideCells = k => (L.guide && L.guide[k]) ? L.guide[k].map(([x, y]) => [x, y - 12 + ROWS]) : [];
 
 function spawn(type) {
   if (!type) type = queue.shift();
   if (!type) { piece = null; return; }
   piece = { type, r: 0, x: type === 'O' ? 4 : 3, y: 0 };
   lastRot = false; lastKick = 0;
+  if (collidesIn(grid, ROT[type][0], piece.x, piece.y)) { piece = null; return; }
   if (!collidesIn(grid, ROT[type][0], piece.x, 1)) piece.y = 1;
 }
 
 const ground = () => collidesIn(grid, ROT[piece.type][piece.r], piece.x, piece.y + 1);
 
 function doAction(a) {
-  if (!piece) return;
+  if (!piece) return false;
   if (a === 'left' || a === 'right') {
     const dx = a === 'left' ? -1 : 1;
-    if (!collidesIn(grid, ROT[piece.type][piece.r], piece.x + dx, piece.y)) { piece.x += dx; lastRot = false; }
-  } else if (a === 'cw' || a === 'ccw') {
+    if (collidesIn(grid, ROT[piece.type][piece.r], piece.x + dx, piece.y)) return false;
+    piece.x += dx; lastRot = false; return true;
+  }
+  if (a === 'wallLeft' || a === 'wallRight') {
+    const dx = a === 'wallLeft' ? -1 : 1; let moved = false;
+    while (!collidesIn(grid, ROT[piece.type][piece.r], piece.x + dx, piece.y)) { piece.x += dx; moved = true; }
+    if (moved) lastRot = false;
+    return moved;
+  }
+  if (a === 'cw' || a === 'ccw') {
     const r = srsRotate(grid, piece, a === 'cw' ? 1 : -1);
-    if (r) { piece.x = r.x; piece.y = r.y; piece.r = r.r; lastRot = true; lastKick = r.kick; rotations++; }
-  } else if (a === 'soft' || a === 'softmax') {
-    if (!ground()) { piece.y++; lastRot = false; }
-  } else if (a === 'drop') {
+    if (!r) return false;
+    piece.x = r.x; piece.y = r.y; piece.r = r.r; lastRot = true; lastKick = r.kick; rotations++;
+    return true;
+  }
+  if (a === 'soft' || a === 'softmax') {
+    if (ground()) return false;
+    piece.y++; lastRot = false; return true;
+  }
+  if (a === 'drop') {
     let moved = false;
     while (!ground()) { piece.y++; moved = true; }
     if (moved) lastRot = false;
     lock();
-  } else if (a === 'hold') {
-    if (holdUsed) return;
+    return true;
+  }
+  if (a === 'hold') {
+    if (holdUsed || (drill && drill.kind === 'finesse')) return false;
     holdUsed = true;
     const t = piece.type;
     if (holdType) { const h = holdType; holdType = t; spawn(h); }
     else { holdType = t; spawn(); }
+    return true;
   }
+  return false;
 }
 
-// ---------- Locking and checking the goal ----------
+// =====================================================================
+//  Locking
+// =====================================================================
 function lock() {
-  const tspin = tSpinCheck(grid, piece, lastRot, lastKick);
+  const ts = tSpinCheck(grid, piece, lastRot, lastKick);
   const cells = pieceCells(piece);
-  cells.forEach(([x, y]) => { if (y >= 0) grid[y][x] = COLOR[piece.type]; });
+  const type = piece.type;
+  cells.forEach(([x, y]) => { if (y >= 0) grid[y][x] = COLOR[type]; });
   flashes.push({ cells, t: 0, dur: 160 });
-  piece = null; holdUsed = false; locks++;
+  piece = null; holdUsed = false;
 
   const full = [];
   for (let y = 0; y < ROWS; y++) if (grid[y].every(c => c)) full.push(y);
   const n = full.length;
+  const difficult = n === 4 || (!!ts && n > 0);
+  const b2b = n > 0 && difficult && lastDifficult;
+  if (n > 0) lastDifficult = difficult;
+  combo = n > 0 ? combo + 1 : -1;
 
-  let result = null, why = '';   // 'win' | 'fail' | null (keep going)
-  if (L.check === 'target') {
-    const key = c => c.join(',');
-    const hit = cells.length === targets.length && cells.every(c => targets.some(t => key(t) === key(c)));
-    if (!hit) {
-      result = 'fail';
-      why = L.name === 'Tuck'
-        ? 'It locked before getting under the ledge. Soft drop to the floor first, then slide in.'
-        : 'Not in the marked spot. Watch the ghost outline before you drop.';
-    } else if (L.maxRotations && rotations > L.maxRotations) {
-      result = 'fail'; why = `Right spot, but you used ${rotations} rotations. Try rotating left once instead.`;
-    } else result = 'win';
-  } else if (L.check === 'tetris') {
-    if (n === 4) result = 'win';
-    else { result = 'fail'; why = 'The S piece doesn\'t help here. Hold it, and the I piece comes out instead.'; }
-  } else if (L.check === 'tsd') {
-    if (tspin === 'full' && n === 2) result = 'win';
-    else if (!lastRot) { result = 'fail'; why = 'That was a plain drop, not a spin. Point the T left, soft drop to the bottom, then rotate left again.'; }
-    else { result = 'fail'; why = 'It spun, but not into the slot. Point the T left first, then rotate left once more at the very bottom.'; }
-  }
+  const ev = { type, ts, n, b2b, combo, cells, index: lockIndex++ };
+  const words = [];
+  if (ts === 'full') words.push('T-SPIN' + ['', ' SINGLE', ' DOUBLE', ' TRIPLE'][n]);
+  else if (ts === 'mini') words.push('MINI T-SPIN' + (n ? ' SINGLE' : ''));
+  else if (n >= 2) words.push(['', '', 'DOUBLE', 'TRIPLE', 'TETRIS'][n]);
+  if (b2b) words.push('BACK-TO-BACK');
+  if (combo > 0) words.push('COMBO ' + combo);
+  if (words.length) popups.push({ lines: words, t: 0, dur: 1100 });
 
-  if (n) {
-    clearRows = full; clearT = 380; status = 'clearing';
-    const label = (tspin === 'full' ? 'T-SPIN ' : '') + ['', 'SINGLE', 'DOUBLE', 'TRIPLE', 'TETRIS'][n];
-    if (n >= 2 || tspin) popups.push({ text: n === 4 ? 'TETRIS' : label, t: 0, dur: 1200 });
-  }
-  pending = { result, why };
-  if (!n) settle();
+  pendingEv = ev;
+  if (n) { clearRows = full; clearT = 340; status = status === 'demo' ? 'demo-clearing' : 'clearing'; }
+  else afterLock();
 }
 
-let pending = null;
-function settle() {
-  const { result, why } = pending;
-  pending = null;
-  if (L.check === 'pc') {
-    const empty = grid.every(r => r.every(c => !c));
-    if (empty) return win(true);
-    if (!queue.length) return fail('Some blocks are left. Plan the pieces so every row finishes together.');
-    status = status === 'demo' ? 'demo' : 'play';
-    spawn();
-    return;
-  }
-  if (result === 'win') win();
-  else if (result === 'fail') fail(why);
-  else { status = status === 'demo' ? 'demo' : 'play'; spawn(); }
+function afterLock() {
+  const ev = pendingEv; pendingEv = null;
+  ev.pc = grid.every(r => r.every(c => !c));
+  if (ev.pc) popups.push({ lines: ['PERFECT CLEAR'], t: 0, dur: 1300 });
+  if (drill) return drillLock(ev);
+
+  const r = evaluate(ev);
+  if (r.result === 'win') return win();
+  if (r.result === 'fail') return fail(r.why);
+  if (L.check === 'build') targets = guideCells(ev.index + 1);
+  spawn();
+  if (!piece) fail('Out of pieces.');
 }
 
-function win(pc) {
-  const wasDemo = demoRunning;
-  status = 'won';
-  if (pc) popups.push({ text: 'PERFECT CLEAR', t: 0, dur: 1400 });
-  popups.push({ text: 'CLEAR!', t: -500, dur: 1400 });
-  if (wasDemo) {
-    setMsg('That\'s how it\'s done. Your turn now.', 'ok');
-    demoRunning = false;
-    $('caption').innerHTML = '';
-    resetTimer = setTimeout(reset, 1600);
+function evaluate(ev) {
+  const key = c => c.join(',');
+  const same = (a, b) => a.length === b.length && a.every(c => b.some(d => key(c) === key(d)));
+  switch (L.check) {
+    case 'target':
+      if (!same(ev.cells, targets)) return { result: 'fail', why: L.fail || 'Not in the marked spot. Watch the ghost outline before you drop.' };
+      if (L.maxRotations && rotations > L.maxRotations) return { result: 'fail', why: `Right spot, but you used ${rotations} rotations. Rotate left once instead.` };
+      return { result: 'win' };
+    case 'tetrisFirst':
+      return ev.n === 4 ? { result: 'win' } : { result: 'fail', why: 'The S piece doesn\'t help here. Hold it, and the I comes out instead.' };
+    case 'spin':
+      if (ev.ts === L.spin && ev.n === L.lines) return { result: 'win' };
+      return { result: 'fail', why: ev.ts ? L.hints.other : L.hints.plain };
+    case 'seq': {
+      const want = L.seq[ev.index];
+      const ok = want && (!want.ts || ev.ts === want.ts) && ev.n === want.lines && (!want.b2b || ev.b2b);
+      if (!ok) return { result: 'fail', why: (want || L.seq[L.seq.length - 1]).fail };
+      return ev.index === L.seq.length - 1 ? { result: 'win' } : { result: 'go' };
+    }
+    case 'ren':
+      if (ev.n < 1) return { result: 'fail', why: L.fail };
+      return ev.index + 1 >= L.ren ? { result: 'win' } : { result: 'go' };
+    case 'pc':
+      if (ev.pc) return { result: 'win' };
+      return queue.length ? { result: 'go' } : { result: 'fail', why: 'Some blocks are left. Plan the pieces so every row finishes together.' };
+    case 'build':
+      if (ev.index < L.guide.length) {
+        return same(ev.cells, guideCells(ev.index)) ? { result: 'go' } : { result: 'fail', why: 'That piece missed its outline. Match each outline exactly.' };
+      }
+      return ev.ts === L.finish.ts && ev.n === L.finish.lines ? { result: 'win' }
+        : { result: 'fail', why: 'The build is right, but the T needs to spin in. Rotate right, soft drop, rotate right again.' };
+  }
+  return { result: 'go' };
+}
+
+function win() {
+  status = 'done';
+  targets = [];
+  popups.push({ lines: ['CLEAR!'], t: -450, dur: 1400 });
+  if (demoRunning) {
+    demoRunning = false; $('caption').innerHTML = '';
+    setMsg('That\'s how it\'s done. Your turn now.');
+    resetTimer = setTimeout(reset, 1700);
     return;
   }
-  done[li] = true;
-  try { localStorage.setItem('tetris-skills', JSON.stringify(done)); } catch (e) {}
-  renderTabs();
-  setMsg((li === LESSONS.length - 1 ? 'Course complete! ' : 'Cleared! ') + L.win, 'ok');
+  let s = 1;
+  if (!usedDemo) s = 2;
+  if (!usedDemo && inputs <= parOf(L)) s = 3;
+  award(s);
+  const extra = s === 3 ? '' : s === 2 ? ` (${inputs} inputs, par ${parOf(L)})` : ' Try again without Show me for more stars.';
+  setMsg((li === LESSONS.length - 1 ? 'Course complete! ' : 'Cleared! ') + L.win + extra);
 }
 
 function fail(why) {
-  status = 'won';   // freeze input until reset
+  status = 'done';
   setMsg(why + ' Resetting…', 'no');
-  resetTimer = setTimeout(() => { reset(); setMsg('Try again.'); }, 1600);
+  resetTimer = setTimeout(() => { reset(); setMsg('Try again.'); }, 1700);
 }
 
-function setMsg(text, cls = '') {
-  const m = $('msg'); m.textContent = text; m.className = 'msg ' + cls;
+function setMsg(text, cls = '') { const m = $('msg'); m.textContent = text; m.className = 'msg ' + cls; }
+
+// =====================================================================
+//  Search: every reachable resting spot for a piece (used by drills)
+// =====================================================================
+function explore(g, type, start) {
+  const key = s => `${s.x},${s.y},${s.r},${s.lr ? 1 : 0},${s.k}`;
+  const q = [{ ...start, lr: false, k: 0, path: [] }], seen = new Set([key(q[0])]), out = [];
+  while (q.length) {
+    const s = q.shift();
+    const sh = ROT[type][s.r];
+    if (collidesIn(g, sh, s.x, s.y + 1)) out.push(s);
+    const nx = [];
+    for (const [dx, nm] of [[-1, 'left'], [1, 'right']])
+      if (!collidesIn(g, sh, s.x + dx, s.y)) nx.push({ ...s, x: s.x + dx, lr: false, k: 0, path: [...s.path, nm] });
+    if (!collidesIn(g, sh, s.x, s.y + 1)) nx.push({ ...s, y: s.y + 1, lr: false, k: 0, path: [...s.path, 'soft'] });
+    for (const [d, nm] of [[1, 'cw'], [-1, 'ccw']]) {
+      const r = srsRotate(g, { type, x: s.x, y: s.y, r: s.r }, d);
+      if (r) nx.push({ ...s, x: r.x, y: r.y, r: r.r, lr: true, k: r.kick, path: [...s.path, nm] });
+    }
+    for (const n of nx) { const k = key(n); if (!seen.has(k)) { seen.add(k); q.push(n); } }
+  }
+  return out;
+}
+function spawnPos(g, type) {
+  const p = { type, r: 0, x: type === 'O' ? 4 : 3, y: 0 };
+  if (!collidesIn(g, ROT[type][0], p.x, 1)) p.y = 1;
+  return p;
+}
+function linesAfter(g, type, s) {
+  const g2 = g.map(r => r.slice());
+  pieceCells({ type, x: s.x, y: s.y, r: s.r }).forEach(([x, y]) => { if (y >= 0) g2[y][x] = 1; });
+  return g2.filter(r => r.every(Boolean)).length;
+}
+function trimSoft(path) { const p = [...path]; while (p.length && p[p.length - 1] === 'soft') p.pop(); return [...p, 'drop']; }
+
+// =====================================================================
+//  Drills
+// =====================================================================
+function startDrill() {
+  clearTimeout(resetTimer);
+  popups = []; flashes = []; clearRows = [];
+  holdType = null; holdUsed = false; lastDifficult = false; combo = -1;
+  if (L.drill === 'finesse') drill = { kind: 'finesse', round: 0, total: 12, perfect: 0, missed: 0, bag: [] };
+  if (L.drill === 'tspin') drill = { kind: 'tspin', round: 0, total: 10, hits: 0, t0: 0 };
+  if (L.drill === 'combo') drill = { kind: 'combo', ren: 0, bag: [] };
+  nextRound();
 }
 
-// ---------- Demo ("Show me") ----------
-let demoRunning = false;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const bagPiece = d => { if (!d.bag.length) d.bag = shuffle(Object.keys(SHAPES)); return d.bag.pop(); };
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+function nextRound() {
+  status = 'play'; inputs = 0; rotations = 0; lockIndex = 0;
+  const d = drill;
+  if (d.kind === 'finesse') {
+    if (d.round >= d.total) return finishDrill();
+    grid = Array.from({ length: ROWS }, empty);
+    const type = bagPiece(d);
+    const spots = finesseTargets(type);
+    const pick = spots[Math.floor(Math.random() * spots.length)];
+    targets = pick.cells; d.optimal = isTouch ? pick.touch : pick.cost; d.solution = pick.path;
+    queue = []; spawn(type);
+  }
+  if (d.kind === 'tspin') {
+    if (d.round >= d.total) return finishDrill();
+    if (d.round === 0) d.t0 = performance.now();
+    const gen = genTSpin();
+    grid = gen.g; targets = []; d.want = gen.want; d.label = gen.label; d.solution = gen.path;
+    queue = []; holdType = null; spawn('T');
+  }
+  if (d.kind === 'combo') {
+    const rows = [E, E, E];
+    for (let i = 0; i < VISIBLE - 4; i++) rows.push(W4);
+    rows.push(['xxxxxxxx.x', 'xxxxxxx.xx', 'xxxxxx.xxx', 'xxxxxxxxx.'][rand(0, 3)]);
+    grid = gridFrom(rows).g; targets = [];
+    queue = []; for (let i = 0; i < 6; i++) queue.push(bagPiece(d));
+    spawn();
+  }
+}
+
+// Every distinct resting spot on an empty floor, with the fewest keyboard inputs
+// (holding a direction to reach the wall counts as one input).
+function finesseTargets(type) {
+  const g = Array.from({ length: ROWS }, empty);
+  const start = spawnPos(g, type);
+  const k = s => `${s.x},${s.r}`;
+  const q = [{ x: start.x, r: start.r, cost: 0, path: [] }], seen = new Set([k(q[0])]);
+  const res = new Map();
+  while (q.length) {
+    const s = q.shift();
+    let y = start.y; while (!collidesIn(g, ROT[type][s.r], s.x, y + 1)) y++;
+    const cells = pieceCells({ type, x: s.x, y, r: s.r });
+    const ck = cells.map(c => c.join(',')).sort().join(';');
+    const turns = s.path.filter(a => a === 'cw' || a === 'ccw').length;
+    const moved = s.path.some(a => a !== 'cw' && a !== 'ccw') ? 1 : 0;
+    if (!res.has(ck)) res.set(ck, { cells, cost: s.cost, path: [...s.path, 'drop'], touch: Math.min(turns, 2) + moved });
+    const nx = [];
+    for (const [dx, nm] of [[-1, 'left'], [1, 'right']])
+      if (!collidesIn(g, ROT[type][s.r], s.x + dx, start.y)) nx.push({ x: s.x + dx, r: s.r, nm });
+    for (const [dx, nm] of [[-1, 'wallLeft'], [1, 'wallRight']]) {
+      let x = s.x; while (!collidesIn(g, ROT[type][s.r], x + dx, start.y)) x += dx;
+      if (x !== s.x) nx.push({ x, r: s.r, nm });
+    }
+    for (const [d, nm] of [[1, 'cw'], [-1, 'ccw']]) {
+      const r = srsRotate(g, { type, x: s.x, y: start.y, r: s.r }, d);
+      if (r && r.y === start.y) nx.push({ x: r.x, r: r.r, nm });
+    }
+    for (const m of nx) {
+      const n = { x: m.x, r: m.r, cost: s.cost + 1, path: [...s.path, m.nm] };
+      if (!seen.has(k(n))) { seen.add(k(n)); q.push(n); }
+    }
+  }
+  return [...res.values()].filter(v => v.cost > 0);
+}
+
+// Random T-spin slot (single, double or triple) on either side; each one is checked by search before use.
+function genTSpin() {
+  const row = open => { let s = ''; for (let x = 0; x < 10; x++) s += open.includes(x) ? '.' : 'x'; return s; };
+  for (let attempt = 0; attempt < 80; attempt++) {
+    const kind = ['TSD', 'TSD', 'TSS', 'TST'][rand(0, 3)];
+    let rows;
+    if (kind === 'TST') {
+      const c = rand(3, 8);
+      const left = n => Array.from({ length: n }, (_, i) => i);
+      rows = [row(left(c)), row(left(c + 1)), row([c]), row([c - 1, c]), row([c])];
+    } else {
+      const s = rand(1, 8);
+      rows = [row([s - 1, s]), row([s - 1, s, s + 1]), row([s])];
+      if (kind === 'TSS') {
+        let h; do { h = rand(0, 9); } while (Math.abs(h - s) < 3);
+        rows[1] = rows[1].slice(0, h) + '.' + rows[1].slice(h + 1);
+      }
+    }
+    if (Math.random() < 0.5) rows = rows.map(r => [...r].reverse().join(''));
+    const garbage = rand(0, 2);
+    for (let i = 0; i < garbage; i++) { const h = rand(0, 9); rows.push('xxxxxxxxxx'.slice(0, h) + '.' + 'xxxxxxxxxx'.slice(h + 1)); }
+    while (rows.length < VISIBLE) rows.unshift(E);
+    const g = gridFrom(rows).g;
+    const want = { TSD: 2, TSS: 1, TST: 3 }[kind];
+    const ok = explore(g, 'T', spawnPos(g, 'T')).filter(s => s.lr && tSpinCheck(g, { type: 'T', x: s.x, y: s.y, r: s.r }, true, s.k) === 'full' && linesAfter(g, 'T', s) === want);
+    if (ok.length) {
+      ok.sort((a, b) => a.path.length - b.path.length);
+      return { g, want, label: { TSD: 'T-spin double', TSS: 'T-spin single', TST: 'T-spin triple' }[kind], path: trimSoft(ok[0].path) };
+    }
+  }
+  return genTSpin();
+}
+
+function drillLock(ev) {
+  const d = drill;
+  const key = c => c.join(',');
+  if (d.kind === 'finesse') {
+    const hit = ev.cells.length === targets.length && ev.cells.every(c => targets.some(t => key(t) === key(c)));
+    if (demoRunning) {
+      demoRunning = false; $('caption').innerHTML = '';
+      setMsg(`Shortest: ${d.optimal} input${d.optimal > 1 ? 's' : ''}. Now a new one for you.`);
+    } else if (!hit) { d.missed++; setMsg('Missed the outline.', 'no'); }
+    else if (inputs <= d.optimal) { d.perfect++; setMsg(`Perfect: ${inputs} input${inputs > 1 ? 's' : ''}.`); }
+    else setMsg(`${inputs} inputs. The shortest is ${d.optimal}.`, 'no');
+    d.round++;
+    status = 'done';
+    resetTimer = setTimeout(nextRound, 700);
+  }
+  if (d.kind === 'tspin') {
+    const hit = ev.ts === 'full' && ev.n === d.want;
+    if (demoRunning) { demoRunning = false; $('caption').innerHTML = ''; setMsg('Your turn on the next one.'); }
+    else if (hit) { d.hits++; setMsg(`Hit: ${d.label}.`); }
+    else setMsg(ev.ts ? `Spun, but that wasn't a ${d.label}.` : `Plain drop. That slot was a ${d.label}.`, 'no');
+    d.round++;
+    status = 'done';
+    resetTimer = setTimeout(nextRound, 800);
+  }
+  if (d.kind === 'combo') {
+    if (ev.n < 1) {
+      status = 'done';
+      const best = Math.max(save.best.combo || 0, d.ren);
+      save.best.combo = best; persist();
+      award(d.ren >= 12 ? 3 : d.ren >= 8 ? 2 : d.ren >= 4 ? 1 : 0);
+      setMsg(`Combo over at ${d.ren}. Best: ${best}. Press Restart to go again.`, d.ren >= 4 ? '' : 'no');
+      return;
+    }
+    d.ren = Math.max(0, ev.combo);
+    queue.push(bagPiece(d));
+    spawn();
+    if (!piece) { status = 'done'; setMsg('Topped out.'); }
+  }
+}
+
+function finishDrill() {
+  const d = drill;
+  status = 'done'; piece = null; targets = [];
+  if (d.kind === 'finesse') {
+    award(d.perfect === d.total ? 3 : d.perfect >= 9 ? 2 : 1);
+    setMsg(`Done: ${d.perfect} of ${d.total} perfect${d.missed ? `, ${d.missed} missed` : ''}. Press Restart to go again.`);
+  }
+  if (d.kind === 'tspin') {
+    const secs = (performance.now() - d.t0) / 1000;
+    d.secs = secs;
+    award(d.hits === d.total && secs < 90 ? 3 : d.hits >= 8 ? 2 : 1);
+    setMsg(`Done: ${d.hits} of ${d.total} T-spins in ${secs.toFixed(0)} s. Press Restart to go again.`);
+  }
+}
+
+// =====================================================================
+//  Demo ("Show me")
+// =====================================================================
 function stopDemo() {
   clearTimeout(demoTimer); demoTimer = null; demoRunning = false;
   clearTimeout(resetTimer); resetTimer = null;
@@ -435,45 +886,88 @@ function stopDemo() {
 }
 
 function runDemo() {
+  if (L.drill === 'combo') return;
+  if (L.drill && (status !== 'play' || !piece)) return;
   stopDemo();
-  reset();
-  setMsg('Watch the moves, then try it yourself.', '');
+  usedDemo = true;
+  let steps;
+  if (L.drill) {
+    steps = [...drill.solution];
+    spawn(piece.type);            // start the current piece over from the top
+  } else {
+    reset();
+    steps = [...L.demo];
+  }
+  setMsg('Watch the moves, then try it yourself.');
   demoRunning = true; status = 'demo';
-  const steps = [...L.demo];
   let i = 0;
   const tick = () => {
     if (!demoRunning) return;
-    if (status === 'clearing') { demoTimer = setTimeout(tick, 120); return; }
+    if (status === 'demo-clearing') { demoTimer = setTimeout(tick, 120); return; }
     if (i >= steps.length || !piece) return;
     const a = steps[i];
     $('caption').innerHTML = `<span>${ACTION_LABEL[a]}</span>`;
-    if (a === 'softmax' && piece && !ground()) { doAction('soft'); demoTimer = setTimeout(tick, 140); return; }
+    if (a === 'softmax' && !ground()) { doAction('soft'); demoTimer = setTimeout(tick, 120); return; }
     if (a !== 'softmax') doAction(a);
     i++;
-    if (!demoRunning) return;   // the demo just finished
-    demoTimer = setTimeout(tick, a === 'drop' ? 700 : 520);
+    if (!demoRunning) return;
+    demoTimer = setTimeout(tick, a === 'drop' ? 650 : a === 'soft' ? 110 : 480);
   };
-  demoTimer = setTimeout(tick, 600);
+  demoTimer = setTimeout(tick, 500);
 }
 
-// ---------- Loop and drawing ----------
+// =====================================================================
+//  Loop and drawing
+// =====================================================================
 let lastT = 0;
+const held = { left: 0, right: 0, soft: 0 };
+let dasDir = 0, dasT = 0, arrT = 0, softT = 0;
+
 function frame(t) {
   const dt = Math.min(50, t - (lastT || t)); lastT = t;
   popups.forEach(p => p.t += dt); popups = popups.filter(p => p.t < p.dur);
   flashes.forEach(f => f.t += dt); flashes = flashes.filter(f => f.t < f.dur);
-  if (status === 'clearing') {
+
+  if (status === 'clearing' || status === 'demo-clearing') {
     clearT -= dt;
     if (clearT <= 0) {
-      for (const y of clearRows) { grid.splice(y, 1); grid.unshift(Array(COLS).fill(null)); }
-      targets = [];
+      const wellRow = () => [0, 1, 2, 3, 4, 5].map(x => palette[(x * 3 + rand(0, 6)) % 7]).concat([null, null, null, null]);
+      for (const y of clearRows) {
+        grid.splice(y, 1);
+        if (drill && drill.kind === 'combo') { grid.splice(HIDDEN + 3, 0, wellRow()); grid[HIDDEN + 2] = grid[HIDDEN + 2] || empty(); }
+        else grid.unshift(empty());
+      }
       clearRows = [];
-      status = demoRunning ? 'demo' : 'play';
-      settle();
+      status = status === 'demo-clearing' ? 'demo' : 'play';
+      afterLock();
     }
   }
+
+  // keyboard auto-repeat (DAS 167 ms, then 33 ms)
+  if (status === 'play' && piece) {
+    if (dasDir) {
+      dasT += dt;
+      if (dasT >= 167) { arrT += dt; while (arrT >= 33) { arrT -= 33; if (!doAction(dasDir < 0 ? 'left' : 'right')) break; } }
+    }
+    if (held.soft) { softT += dt; while (softT >= 45) { softT -= 45; doAction('soft'); } }
+  }
+
+  hud();
   draw();
   requestAnimationFrame(frame);
+}
+
+function hud() {
+  const d = drill;
+  let h = '';
+  if (d && d.kind === 'finesse') h = `<div class="label">Round</div><div class="v">${Math.min(d.round + 1, d.total)}/${d.total}</div><div class="label">Perfect</div><div class="v">${d.perfect}</div><div class="label">Inputs</div><div class="v">${inputs}</div>`;
+  if (d && d.kind === 'tspin') {
+    const secs = d.secs != null ? d.secs : d.t0 ? (performance.now() - d.t0) / 1000 : 0;
+    h = `<div class="label">Slot</div><div class="v" style="font-size:14px;line-height:1.3">${d.label || ''}</div><div class="label">Round</div><div class="v">${Math.min(d.round + 1, d.total)}/${d.total}</div><div class="label">Hits</div><div class="v">${d.hits}</div><div class="label">Time</div><div class="v">${secs.toFixed(0)}</div>`;
+  }
+  if (d && d.kind === 'combo') h = `<div class="label">Combo</div><div class="v">${d.ren}</div><div class="label">Best</div><div class="v">${Math.max(save.best.combo || 0, d.ren)}</div>`;
+  if (!d && L && L.demo) h = `<div class="label">Inputs</div><div class="v">${inputs}</div><div class="label">Par</div><div class="v">${parOf(L)}</div>`;
+  const el = $('hud'); if (el._h !== h) { el.innerHTML = h; el._h = h; }
 }
 
 const py = y => (y - HIDDEN) * CELL;
@@ -484,20 +978,20 @@ function draw() {
   ctx.clearRect(0, 0, w, h);
   drawGridLines(ctx, COLS, VISIBLE, CELL);
 
-  // target spots
-  ctx.fillStyle = 'rgba(0,0,0,0.08)';
-  targets.forEach(([x, y]) => { if (!grid[y][x]) ctx.fillRect(x * CELL + 3, py(y) + 3, CELL - 6, CELL - 6); });
-  ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
-  targets.forEach(([x, y]) => { if (!grid[y][x]) ctx.strokeRect(x * CELL + 3, py(y) + 3, CELL - 6, CELL - 6); });
+  targets.forEach(([x, y]) => {
+    if (y < HIDDEN || grid[y][x]) return;
+    ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(x * CELL + 3, py(y) + 3, CELL - 6, CELL - 6);
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(x * CELL + 3, py(y) + 3, CELL - 6, CELL - 6);
+  });
 
+  const clearing = status === 'clearing' || status === 'demo-clearing';
   for (let y = HIDDEN; y < ROWS; y++)
     for (let x = 0; x < COLS; x++) {
       if (!grid[y][x]) continue;
-      if (status === 'clearing' && clearRows.includes(y)) {
-        const blink = Math.floor((380 - clearT) / 50) % 2 === 0;
-        block(ctx, x * CELL, py(y), CELL, grid[y][x]);
-        if (blink) { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillRect(x * CELL, py(y), CELL, CELL); }
-      } else block(ctx, x * CELL, py(y), CELL, grid[y][x]);
+      block(ctx, x * CELL, py(y), CELL, grid[y][x]);
+      if (clearing && clearRows.includes(y) && Math.floor((340 - clearT) / 50) % 2 === 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillRect(x * CELL, py(y), CELL, CELL);
+      }
     }
 
   if (piece) {
@@ -512,62 +1006,78 @@ function draw() {
     f.cells.forEach(([x, y]) => { if (y >= HIDDEN) ctx.fillRect(x * CELL, py(y), CELL, CELL); });
   }
 
+
   popups.forEach((p, i) => {
     if (p.t < 0) return;
     const a = p.t > p.dur - 300 ? (p.dur - p.t) / 300 : 1;
     const pop = p.t < 140 ? 1.5 - 0.5 * (p.t / 140) : 1;
-    bigText(ctx, p.text, w / 2, h * 0.32 + i * CELL * 1.1, CELL * 0.85 * pop, a);
+    p.lines.forEach((line, j) => bigText(ctx, line, w / 2, h * 0.3 + (i * 2 + j) * CELL * 0.9, (j ? 0.55 : 0.8) * CELL * pop, a));
   });
 
-  // hold + next
   const hw = parseFloat(holdC.style.width), hh = parseFloat(holdC.style.height);
   hctx.clearRect(0, 0, hw, hh);
   if (holdType) drawMini(hctx, holdType, hw / 2, hh / 2, NS, holdUsed ? 0.3 : 1);
-  const nw = parseFloat(nextC.style.width), slot = parseFloat(nextC.style.height) / 3;
-  nctx.clearRect(0, 0, nw, slot * 3);
-  queue.slice(0, 3).forEach((t, i) => drawMini(nctx, t, nw / 2, slot * i + slot / 2, NS));
+  const nw = parseFloat(nextC.style.width), slot = parseFloat(nextC.style.height) / 4;
+  nctx.clearRect(0, 0, nw, slot * 4);
+  (queue || []).slice(0, 4).forEach((t, i) => drawMini(nctx, t, nw / 2, slot * i + slot / 2, NS));
 }
 
-// ---------- Input ----------
-function act(a) {
+// =====================================================================
+//  Input
+// =====================================================================
+function act(a, countIt = true) {
   if (status !== 'play' || !piece) return;
+  if (countIt && !isTouch && a !== 'soft') inputs++;
   doAction(a);
 }
 
+// Physical keys (e.code), so Z / X / C work with a Korean keyboard layout too.
 const KEYMAP = {
   ArrowLeft: 'left', ArrowRight: 'right', ArrowDown: 'soft',
-  ArrowUp: 'cw', x: 'cw', X: 'cw', z: 'ccw', Z: 'ccw', Control: 'ccw',
-  ' ': 'drop', c: 'hold', C: 'hold', Shift: 'hold',
+  ArrowUp: 'cw', KeyX: 'cw', KeyZ: 'ccw', ControlLeft: 'ccw', ControlRight: 'ccw',
+  Space: 'drop', KeyC: 'hold', ShiftLeft: 'hold', ShiftRight: 'hold',
 };
 document.addEventListener('keydown', e => {
-  const a = KEYMAP[e.key];
-  if (!a) { if (e.key === 'r' || e.key === 'R') { stopDemo(); reset(); setMsg(''); } return; }
+  if (e.target.tagName === 'SELECT') return;
+  if (e.code === 'KeyR') { openLesson(li); return; }
+  const a = KEYMAP[e.code];
+  if (!a) return;
   e.preventDefault();
-  if (e.repeat && !['left', 'right', 'soft'].includes(a)) return;
-  act(a);
+  if (e.repeat) return;
+  if (a === 'left' || a === 'right') {
+    held[a] = 1; dasDir = a === 'left' ? -1 : 1; dasT = 0; arrT = 0;
+    act(a);
+  } else if (a === 'soft') { held.soft = 1; softT = 0; act('soft'); }
+  else act(a, !(a === 'drop' && drill && drill.kind === 'finesse'));
 });
+document.addEventListener('keyup', e => {
+  const a = KEYMAP[e.code];
+  if (a === 'left' || a === 'right') { held[a] = 0; dasDir = held.left ? -1 : held.right ? 1 : 0; dasT = 0; arrT = 0; }
+  if (a === 'soft') held.soft = 0;
+});
+window.addEventListener('blur', () => { held.left = held.right = held.soft = 0; dasDir = 0; });
 
 attachTouch({
   active: () => status === 'play' && !!piece,
   cell: () => CELL,
   holdEl: $('hold-box'),
   area: document.querySelector('.play'),
-  move: dx => act(dx < 0 ? 'left' : 'right'),
-  soft: () => act('soft'),
-  hard: () => act('drop'),
-  cw: () => act('cw'),
-  ccw: () => act('ccw'),
-  hold: () => act('hold'),
+  move: dx => act(dx < 0 ? 'left' : 'right', false),
+  soft: () => act('soft', false),
+  hard: () => act('drop', false),
+  cw: () => act('cw', false),
+  ccw: () => act('ccw', false),
+  hold: () => act('hold', false),
+  gesture: () => { if (isTouch) inputs++; },
 });
 
 $('demo-btn').addEventListener('click', runDemo);
-$('reset-btn').addEventListener('click', () => { stopDemo(); reset(); setMsg(''); });
+$('reset-btn').addEventListener('click', () => openLesson(li));
 $('next-btn').addEventListener('click', () => { if (li < LESSONS.length - 1) openLesson(li + 1); });
-
 window.addEventListener('resize', size);
-const firstOpen = LESSONS.findIndex((_, i) => !done[i]);
+
+const firstOpen = LESSONS.findIndex((_, i) => !save.stars[i]);
 openLesson(firstOpen === -1 ? 0 : firstOpen);
-size();
 requestAnimationFrame(frame);
 </script>
 </body>

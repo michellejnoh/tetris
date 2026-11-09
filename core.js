@@ -182,10 +182,28 @@ function bigText(c, text, x, y, size, alpha = 1) {
 // Drag left/right: piece follows your finger, a short distance per column.
 // Slide down: soft drop.  Flick down: hard drop.  Flick up or tap the Hold box: hold.
 // Tap anywhere: rotate right.  Two-finger tap: rotate left.
+// Drag speed setting, shared by both pages. Normal = the piece moves one column for every
+// board cell your finger travels, so it stays under your finger.
+const DRAG_SPEEDS = { slow: 1.35, normal: 1, fast: 0.72 };
+function getDragSpeed() {
+  try { const v = localStorage.getItem('tetris-drag'); return DRAG_SPEEDS[v] ? v : 'normal'; } catch (e) { return 'normal'; }
+}
+function setDragSpeed(v) { try { localStorage.setItem('tetris-drag', v); } catch (e) {} }
+
+// Renders "Drag speed: Slow / Normal / Fast" into an element.
+function renderDragSetting(el) {
+  const cur = getDragSpeed();
+  el.innerHTML = '<span class="ds-label">Drag speed</span>' + Object.keys(DRAG_SPEEDS).map(k =>
+    `<button type="button" class="ds-btn${k === cur ? ' on' : ''}" data-v="${k}">${k[0].toUpperCase() + k.slice(1)}</button>`).join('');
+  el.querySelectorAll('.ds-btn').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); setDragSpeed(b.dataset.v); renderDragSetting(el);
+  }));
+}
+
 function attachTouch(o) {
   let t = null;
-  const stepX = () => Math.max(14, Math.min(24, o.cell() * 0.62));
-  const stepY = () => Math.max(16, Math.min(28, o.cell() * 0.75));
+  const stepX = () => Math.max(20, o.cell() * 0.95) * DRAG_SPEEDS[getDragSpeed()];
+  const stepY = () => Math.max(18, o.cell() * 0.8);
 
   document.addEventListener('touchstart', e => {
     if (e.target.closest('button, a, .no-touch')) return;
@@ -193,7 +211,7 @@ function attachTouch(o) {
     if (o.area && !o.area.contains(e.target) && !inHold) return;   // let the page scroll elsewhere
     if (!o.active()) return;
     e.preventDefault();
-    if (inHold && e.touches.length === 1) { o.hold(); t = null; return; }
+    if (inHold && e.touches.length === 1) { o.hold(); if (o.gesture) o.gesture(); t = null; return; }
     if (t && e.touches.length === 2) { t.two = true; return; }
     if (e.touches.length > 1) return;
     const p = e.touches[0], now = performance.now();
@@ -240,6 +258,7 @@ function attachTouch(o) {
     else if (t.far < 10 && dt < 300) o.cw();
     else if (vy > 0.8 && dy > 30 && dy > 1.5 * Math.abs(dx)) o.hard();
     else if (vy < -0.6 && dy < -30 && -dy > 1.5 * Math.abs(dx)) o.hold();
+    if (o.gesture) o.gesture();   // one finished gesture = one input (used by the finesse drill)
     t = null;
   }, { passive: false });
 

@@ -12,7 +12,7 @@ Open `index.html` in a browser to play.
 
 | Action | Keyboard | Phone |
 |---|---|---|
-| Move | Left / Right (hold to slide) | drag sideways |
+| Move | Left / Right (hold to slide) | drag sideways (Slow / Normal / Fast setting on the start screen) |
 | Soft drop | Down | slide down |
 | Hard drop | space | flick down |
 | Rotate right | Up or X | tap |
@@ -22,14 +22,12 @@ Open `index.html` in a browser to play.
 
 ## Skills course
 
-Six short lessons, each a minigame on a small board. Every lesson has a "Show me" button that plays the solution move by move.
+Four chapters of minigame lessons on expert techniques, each with a "Show me" demo and up to three stars. Every board was checked with a solver that runs the same rules as the game.
 
-1. Move & drop: line up the ghost piece and hard drop
-2. Rotate left: reach a spot with one rotation instead of three
-3. Hold: save a piece to score a Tetris
-4. Tuck: soft drop, then slide under a ledge
-5. T-spin double: spin a T into a slot
-6. Perfect clear: plan three pieces with the Next queue
+1. **Foundations (기본기):** ghost and hard drop, rotating both ways, hold, tucking under a ledge, and a finesse drill that scores you on using the fewest inputs
+2. **T-spins (T스핀):** mini, single (TSS), double (TSD), triple (TST), and a drill of random T-spin slots
+3. **Attack (공격):** back-to-back, combo (REN) in a 4-wide well, perfect clears, a perfect clear puzzle with a Z-spin, and an endless 4-wide combo drill
+4. **Openers (빌드):** a first-bag opener that builds a T-spin double (개막TSD)
 
 ## Rules
 
