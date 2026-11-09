@@ -1,18 +1,35 @@
 # Tetris
 
-A Tetris game in one HTML file, following the official Tetris Guideline rules. Open `index.html` in a browser to play.
+A Tetris game following the official Tetris Guideline rules, plus a skills course that teaches the hard techniques with small minigames.
+
+- `index.html` is the game
+- `skills.html` is the skills course
+- `core.js` holds the rules, drawing and touch controls both pages share
+
+Open `index.html` in a browser to play.
 
 ## Controls
 
 | Action | Keyboard | Phone |
 |---|---|---|
-| Move | ← → (hold to slide) | drag sideways |
-| Soft drop | ↓ | drag down |
+| Move | Left / Right (hold to slide) | drag sideways |
+| Soft drop | Down | slide down |
 | Hard drop | space | flick down |
-| Rotate right | ↑ or X | tap |
+| Rotate right | Up or X | tap |
 | Rotate left | Z or Ctrl | two-finger tap |
-| Hold | C or Shift | swipe up |
+| Hold | C or Shift | tap the Hold box, or flick up |
 | Pause | Esc or P | Pause button |
+
+## Skills course
+
+Six short lessons, each a minigame on a small board. Every lesson has a "Show me" button that plays the solution move by move.
+
+1. Move & drop: line up the ghost piece and hard drop
+2. Rotate left: reach a spot with one rotation instead of three
+3. Hold: save a piece to score a Tetris
+4. Tuck: soft drop, then slide under a ledge
+5. T-spin double: spin a T into a slot
+6. Perfect clear: plan three pieces with the Next queue
 
 ## Rules
 

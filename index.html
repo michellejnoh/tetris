@@ -2,53 +2,56 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Tetris</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
   body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
     background: #fff;
     color: #000;
-    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
   }
+  a { color: inherit; }
 
+  /* ---------- Desktop ---------- */
   .game {
     display: grid;
-    grid-template-columns: 120px auto 120px;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 130px auto 130px;
+    grid-template-rows: auto auto auto 1fr;
     grid-template-areas:
-      "hold  board next"
-      "stats board keys";
+      "title   board next"
+      "hold    board next"
+      "stats   board keys"
+      "actions board keys";
     gap: 0 28px;
     padding: 24px;
   }
-  .hold  { grid-area: hold; }
-  .next  { grid-area: next; }
-  .stats { grid-area: stats; display: flex; flex-direction: column; gap: 18px; margin-top: 28px; }
-  .keys  { grid-area: keys; font-size: 12px; line-height: 1.8; color: #777; margin-top: 24px; }
+  .title   { grid-area: title; font-size: 34px; letter-spacing: -0.5px; line-height: 1; margin-bottom: 26px; }
+  .hold    { grid-area: hold; }
+  .next    { grid-area: next; }
+  .stats   { grid-area: stats; display: flex; flex-direction: column; gap: 18px; margin-top: 28px; }
+  .actions { grid-area: actions; margin-top: 28px; font-size: 13px; }
+  .keys    { grid-area: keys; font-size: 12px; line-height: 1.8; color: #777; margin-top: 24px; }
   .board-wrap { grid-area: board; position: relative; will-change: transform; }
-  #pause-btn { grid-area: pause; display: none; }
 
   canvas#board { display: block; background: #fff; border: 2px solid #000; }
   canvas#hold, canvas#next { display: block; }
 
-  .title { font-weight: 500; font-size: 34px; letter-spacing: -0.5px; line-height: 1; margin-bottom: 26px; }
-  .label {
-    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
-    text-transform: uppercase; color: #777; margin-bottom: 8px;
-  }
-  .value { font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 8px; }
+  .value { font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.1; }
   .keys b { font-weight: 500; color: #000; }
+  .actions a { text-decoration: none; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
 
   .overlay {
     position: absolute; inset: 0;
@@ -60,62 +63,53 @@
   .overlay.hidden { display: none; }
   .overlay h2 { font-weight: 500; font-size: 30px; letter-spacing: 2px; text-transform: uppercase; }
   .overlay p { font-size: 13px; color: #555; line-height: 1.7; }
+  .overlay a { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
   button {
     font-family: inherit; font-size: 13px; font-weight: 500;
     letter-spacing: 1px; text-transform: uppercase;
     background: #000; color: #fff; border: none;
     padding: 12px 22px; cursor: pointer;
   }
-  #pause-btn { background: none; color: #000; border: 1.5px solid #000; padding: 8px 12px; font-size: 11px; }
+  #pause-btn { display: none; background: none; color: #000; border: 1.5px solid #000; padding: 7px 10px; font-size: 11px; }
   .mobile-only { display: none; }
 
+  /* ---------- Phone: big board, hold + next in a column on the right ---------- */
   @media (max-width: 600px), (pointer: coarse) {
+    body { align-items: flex-start; }
     .game {
-      grid-template-columns: auto 1fr auto;
-      grid-template-rows: auto auto auto;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto auto 1fr;
       grid-template-areas:
-        "hold  next  pause"
-        "board board board"
-        "stats stats stats";
-      gap: 10px 14px;
-      padding: 10px;
-      align-items: center;
+        "stats actions"
+        "board hold"
+        "board next"
+        "board .";
+      gap: 8px 8px;
+      padding: calc(env(safe-area-inset-top) + 8px) 8px calc(env(safe-area-inset-bottom) + 8px);
     }
-    .board-wrap { justify-self: center; }
-    .title, .keys, .desktop-only { display: none; }
+    .title, .keys, .desktop-only, .actions a { display: none; }
     .mobile-only { display: block; }
-    #pause-btn { display: block; justify-self: end; }
-    .hold { justify-self: start; }
-    .next { justify-self: center; }
-    .label { margin-bottom: 4px; font-size: 10px; }
-    .stats { flex-direction: row; justify-content: center; gap: 22px; margin-top: 0; }
-    .value { font-size: 20px; }
+    #pause-btn { display: block; }
+    .actions { margin: 0; justify-self: end; align-self: center; }
+    .stats { flex-direction: row; gap: 16px; margin: 0; align-self: center; }
+    .stats .label { font-size: 9px; margin-bottom: 2px; letter-spacing: 1px; }
+    .stats .value { font-size: 17px; }
+    .hold {
+      border: 1.5px solid #000; padding: 6px 0 4px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .next { display: flex; flex-direction: column; align-items: center; margin-top: 4px; }
+    .hold .label, .next .label { font-size: 9px; margin-bottom: 4px; letter-spacing: 1px; }
   }
 </style>
 </head>
 <body>
 <div class="game">
-  <div class="hold">
-    <div class="title">Tetris</div>
+  <div class="title">Tetris</div>
+
+  <div class="hold" id="hold-box">
     <div class="label">Hold</div>
     <canvas id="hold"></canvas>
-  </div>
-
-  <div class="board-wrap" id="wrap">
-    <canvas id="board"></canvas>
-    <div class="overlay" id="overlay">
-      <h2 id="ov-title">Tetris</h2>
-      <p id="ov-text">
-        <span class="desktop-only">Press Enter to start</span>
-        <span class="mobile-only">Tap to rotate, drag to move<br>Drag down to drop, flick down to slam<br>Swipe up to hold<br>Two-finger tap to rotate back</span>
-      </p>
-      <button id="ov-btn">Start</button>
-    </div>
-  </div>
-
-  <div class="next">
-    <div class="label">Next</div>
-    <canvas id="next"></canvas>
   </div>
 
   <div class="stats">
@@ -123,6 +117,26 @@
     <div><div class="label">Lines</div><div class="value" id="lines">0</div></div>
     <div><div class="label">Level</div><div class="value" id="level">1</div></div>
     <div><div class="label">Best</div><div class="value" id="best">0</div></div>
+  </div>
+
+  <div class="actions">
+    <a href="skills.html">Skills course</a>
+    <button id="pause-btn">Pause</button>
+  </div>
+
+  <div class="board-wrap" id="wrap">
+    <canvas id="board"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="ov-title">Tetris</h2>
+      <p id="ov-text"></p>
+      <button id="ov-btn">Start</button>
+      <a href="skills.html" id="ov-link">Learn the skills</a>
+    </div>
+  </div>
+
+  <div class="next">
+    <div class="label">Next</div>
+    <canvas id="next"></canvas>
   </div>
 
   <div class="keys">
@@ -134,152 +148,52 @@
     <b>C / Shift</b> hold<br>
     <b>Esc / P</b> pause
   </div>
-
-  <button id="pause-btn">Pause</button>
 </div>
 
+<script src="core.js"></script>
 <script>
-// ---------- Rules (Tetris Guideline) ----------
-const COLS = 10, VISIBLE = 20, HIDDEN = 2, ROWS = VISIBLE + HIDDEN;
+// ---------- Game settings (Tetris Guideline) ----------
+const VISIBLE = 20, ROWS = VISIBLE + HIDDEN;
 const LOCK_DELAY = 500;      // ms a piece can rest on the stack before locking
 const MAX_RESETS = 15;       // moves/rotations that reset the lock timer
 const DAS = 167, ARR = 33;   // key auto-repeat: delay, then rate (ms)
 const CLEAR_MS = 420;        // line-clear animation length
 const NEXT_COUNT = 5;
 
-const SHAPES = {
-  I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
-  O: [[1,1],[1,1]],
-  T: [[0,1,0],[1,1,1],[0,0,0]],
-  S: [[0,1,1],[1,1,0],[0,0,0]],
-  Z: [[1,1,0],[0,1,1],[0,0,0]],
-  J: [[1,0,0],[1,1,1],[0,0,0]],
-  L: [[0,0,1],[1,1,1],[0,0,0]],
-};
-
-// Palette colours, matched to the official colour of each piece as closely as the palette allows.
-const COLOR = {
-  I: '#A5BCD6', // Cerulean            (official: cyan)
-  O: '#F5EFC6', // Transparent Yellow  (official: yellow)
-  Z: '#4D0E12', // Sceptre Red         (official: red)
-  L: '#4A2E27', // Potting Soil        (official: orange)
-  S: '#231815', // Java                (official: green)
-  J: '#6E86A6', // added: dusty blue   (official: blue)
-  T: '#8C3B57', // added: raspberry    (official: purple)
-};
-
-const rotCW = s => s[0].map((_, i) => s.map(r => r[i]).reverse());
-const ROT = {};
-for (const t in SHAPES) {
-  ROT[t] = [SHAPES[t]];
-  for (let i = 1; i < 4; i++) ROT[t].push(rotCW(ROT[t][i - 1]));
-}
-
-// Super Rotation System wall kicks, as (x, y) with y pointing up.
-const KICKS = {
-  '0>1': [[0,0],[-1,0],[-1, 1],[0,-2],[-1,-2]],
-  '1>0': [[0,0],[ 1,0],[ 1,-1],[0, 2],[ 1, 2]],
-  '1>2': [[0,0],[ 1,0],[ 1,-1],[0, 2],[ 1, 2]],
-  '2>1': [[0,0],[-1,0],[-1, 1],[0,-2],[-1,-2]],
-  '2>3': [[0,0],[ 1,0],[ 1, 1],[0,-2],[ 1,-2]],
-  '3>2': [[0,0],[-1,0],[-1,-1],[0, 2],[-1, 2]],
-  '3>0': [[0,0],[-1,0],[-1,-1],[0, 2],[-1, 2]],
-  '0>3': [[0,0],[ 1,0],[ 1, 1],[0,-2],[ 1,-2]],
-};
-const KICKS_I = {
-  '0>1': [[0,0],[-2,0],[ 1,0],[-2,-1],[ 1, 2]],
-  '1>0': [[0,0],[ 2,0],[-1,0],[ 2, 1],[-1,-2]],
-  '1>2': [[0,0],[-1,0],[ 2,0],[-1, 2],[ 2,-1]],
-  '2>1': [[0,0],[ 1,0],[-2,0],[ 1,-2],[-2, 1]],
-  '2>3': [[0,0],[ 2,0],[-1,0],[ 2, 1],[-1,-2]],
-  '3>2': [[0,0],[-2,0],[ 1,0],[-2,-1],[ 1, 2]],
-  '3>0': [[0,0],[ 1,0],[-2,0],[ 1,-2],[-2, 1]],
-  '0>3': [[0,0],[-1,0],[ 2,0],[-1,-2],[ 2, 1]],
-};
-
-// Guideline gravity: seconds per row = (0.8 - (level-1) * 0.007)^(level-1)
-const gravityMs = lv => {
-  const l = Math.min(lv, 20);
-  return Math.pow(0.8 - (l - 1) * 0.007, l - 1) * 1000;
-};
-
-// ---------- Elements ----------
 const $ = id => document.getElementById(id);
 const board = $('board'), ctx = board.getContext('2d');
 const holdC = $('hold'), hctx = holdC.getContext('2d');
 const nextC = $('next'), nctx = nextC.getContext('2d');
 const wrap = $('wrap'), overlay = $('overlay');
-const ovTitle = $('ov-title'), ovText = $('ov-text'), ovBtn = $('ov-btn'), pauseBtn = $('pause-btn');
-const GREY = '#8E8E8E';
-const FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+const ovTitle = $('ov-title'), ovText = $('ov-text'), ovBtn = $('ov-btn'), ovLink = $('ov-link');
+const pauseBtn = $('pause-btn');
 
-let CELL = 30, NS = 20, compact = false;
+const START_TEXT =
+  '<span class="desktop-only">Press Enter to start</span>' +
+  '<span class="mobile-only">Drag to move, tap to rotate<br>Slide down to drop faster<br>Flick down to drop, flick up to hold<br>Two-finger tap to rotate left</span>';
 
-// ---------- Block drawing (bevelled, arcade style) ----------
-const mix = (hex, target, a) => {
-  const n = parseInt(hex.slice(1), 16);
-  const c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v + (target - v) * a));
-  return `rgb(${c[0]},${c[1]},${c[2]})`;
-};
-const BEVEL = {};
-const bevelOf = c => BEVEL[c] || (BEVEL[c] =
-  { top: mix(c, 255, 0.5), left: mix(c, 255, 0.28), bottom: mix(c, 0, 0.38), right: mix(c, 0, 0.22) });
-
-function poly(c, pts) {
-  c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
-  c.closePath(); c.fill();
-}
-
-function block(c, px, py, s, color, alpha = 1) {
-  const b = Math.max(2, Math.round(s * 0.16));
-  const v = bevelOf(color);
-  c.globalAlpha = alpha;
-  c.fillStyle = color; c.fillRect(px, py, s, s);
-  c.fillStyle = v.top;    poly(c, [[px, py], [px + s, py], [px + s - b, py + b], [px + b, py + b]]);
-  c.fillStyle = v.left;   poly(c, [[px, py], [px + b, py + b], [px + b, py + s - b], [px, py + s]]);
-  c.fillStyle = v.bottom; poly(c, [[px, py + s], [px + b, py + s - b], [px + s - b, py + s - b], [px + s, py + s]]);
-  c.fillStyle = v.right;  poly(c, [[px + s, py], [px + s, py + s], [px + s - b, py + s - b], [px + s - b, py + b]]);
-  c.fillStyle = 'rgba(255,255,255,0.45)';
-  c.fillRect(px + b + 1, py + b + 1, Math.max(1, Math.round(b * 0.7)), Math.max(1, Math.round(b * 0.7)));
-  c.strokeStyle = 'rgba(0,0,0,0.22)'; c.lineWidth = 1;
-  c.strokeRect(px + 0.5, py + 0.5, s - 1, s - 1);
-  c.globalAlpha = 1;
-}
-
-function drawMini(c, type, cx, cy, ns, alpha = 1) {
-  let s = SHAPES[type].filter(r => r.some(v => v));
-  const w = s[0].length, h = s.length;
-  const ox = Math.round(cx - (w * ns) / 2), oy = Math.round(cy - (h * ns) / 2);
-  s.forEach((row, y) => row.forEach((v, x) => { if (v) block(c, ox + x * ns, oy + y * ns, ns, COLOR[type], alpha); }));
-}
+let CELL = 30, NS = 20, compact = false, nextShown = NEXT_COUNT;
 
 // ---------- Sizing ----------
-function setCanvas(c, cx, w, h) {
-  const dpr = window.devicePixelRatio || 1;
-  c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
-  c.style.width = w + 'px'; c.style.height = h + 'px';
-  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
 function sizeCanvases() {
   compact = window.matchMedia('(max-width: 600px), (pointer: coarse)').matches;
   if (compact) {
-    const maxH = window.innerHeight - 150;
-    const maxW = window.innerWidth - 24;
-    CELL = Math.max(14, Math.min(34, Math.floor(Math.min(maxH / VISIBLE, maxW / COLS))));
-    // hold (4.5 cells) + 3 next pieces (13.5 cells) + pause button must fit across the screen
-    const room = window.innerWidth - 20 - 28 - 80;
-    NS = Math.max(7, Math.floor(Math.min(CELL * 0.5, room / 18)));
-    setCanvas(holdC, hctx, 4.5 * NS, 2.6 * NS);
-    setCanvas(nextC, nctx, 3 * 4.5 * NS, 2.6 * NS);
+    const W = window.innerWidth, H = window.innerHeight;
+    // board (10 cells) + side column (~1.9 cells) + gaps; height: 20 cells + top bar
+    CELL = Math.floor(Math.min((W - 28) / 11.9, (H - 70) / VISIBLE));
+    CELL = Math.max(14, Math.min(40, CELL));
+    NS = Math.max(7, Math.round(CELL * 0.4));
+    nextShown = 4;
+    setCanvas(holdC, hctx, 4.4 * NS, 2.4 * NS);
+    setCanvas(nextC, nctx, 4.4 * NS, nextShown * 2.9 * NS);
   } else {
     const maxH = window.innerHeight - 60;
-    const maxW = window.innerWidth - 360;
+    const maxW = window.innerWidth - 380;
     CELL = Math.max(16, Math.min(34, Math.floor(Math.min(maxH / VISIBLE, maxW / COLS))));
     NS = Math.round(CELL * 0.62);
+    nextShown = NEXT_COUNT;
     setCanvas(holdC, hctx, 4.5 * NS, 2.8 * NS);
-    setCanvas(nextC, nctx, 4.5 * NS, NEXT_COUNT * 2.8 * NS);
+    setCanvas(nextC, nctx, 4.5 * NS, nextShown * 2.8 * NS);
   }
   setCanvas(board, ctx, COLS * CELL, VISIBLE * CELL);
   draw();
@@ -293,8 +207,6 @@ let dropAcc, lockT, resets, lowest, lastRot, lastKick;
 let readyT = 0, clearT = 0, clearRows = [], overT = 0;
 let softHeld = false, dasDir = 0, dasT = 0, arrT = 0;
 const heldKeys = { left: false, right: false };
-
-// effects
 let flashes = [], particles = [], trails = [], popups = [], shakeT = 0, shakeAmp = 0;
 
 try { best = +localStorage.getItem('tetris-best') || 0; } catch (e) {}
@@ -311,16 +223,7 @@ function bag() {
 }
 function fillQueue() { while (queue.length < NEXT_COUNT + 1) queue.push(...bag()); }
 
-function collides(shape, ox, oy) {
-  for (let y = 0; y < shape.length; y++)
-    for (let x = 0; x < shape[y].length; x++) {
-      if (!shape[y][x]) continue;
-      const gx = ox + x, gy = oy + y;
-      if (gx < 0 || gx >= COLS || gy >= ROWS) return true;
-      if (gy >= 0 && grid[gy][gx]) return true;
-    }
-  return false;
-}
+const collides = (shape, x, y) => collidesIn(grid, shape, x, y);
 const shapeOf = p => ROT[p.type][p.r];
 const onGround = () => collides(shapeOf(piece), piece.x, piece.y + 1);
 
@@ -333,9 +236,7 @@ function spawn(type) {
 }
 
 function afterMove() {
-  if (onGround()) {
-    if (resets < MAX_RESETS) { resets++; lockT = 0; }
-  }
+  if (onGround() && resets < MAX_RESETS) { resets++; lockT = 0; }
 }
 
 function descended() {
@@ -350,20 +251,13 @@ function tryMove(dx) {
 }
 
 function tryRotate(dir) {
-  if (!piece || piece.type === 'O') return false;
-  const from = piece.r, to = (from + dir + 4) % 4;
-  const table = (piece.type === 'I' ? KICKS_I : KICKS)[`${from}>${to}`];
-  const shape = ROT[piece.type][to];
-  for (let i = 0; i < table.length; i++) {
-    const nx = piece.x + table[i][0], ny = piece.y - table[i][1];
-    if (!collides(shape, nx, ny)) {
-      piece.x = nx; piece.y = ny; piece.r = to;
-      lastRot = true; lastKick = i;
-      afterMove();
-      return true;
-    }
-  }
-  return false;
+  if (!piece) return false;
+  const r = srsRotate(grid, piece, dir);
+  if (!r) return false;
+  piece.x = r.x; piece.y = r.y; piece.r = r.r;
+  lastRot = true; lastKick = r.kick;
+  afterMove();
+  return true;
 }
 
 function softStep() {
@@ -378,11 +272,7 @@ function hardDrop() {
   while (!collides(shapeOf(piece), piece.x, piece.y + d + 1)) d++;
   if (d > 0) {
     const cols = {};
-    shapeOf(piece).forEach((row, y) => row.forEach((v, x) => {
-      if (!v) return;
-      const gx = piece.x + x, gy = piece.y + y;
-      if (cols[gx] === undefined || gy < cols[gx]) cols[gx] = gy;
-    }));
+    pieceCells(piece).forEach(([gx, gy]) => { if (cols[gx] === undefined || gy < cols[gx]) cols[gx] = gy; });
     trails.push({ cols, dy: d, color: COLOR[piece.type], t: 0, dur: 200 });
     piece.y += d; lastRot = false;
   }
@@ -399,31 +289,12 @@ function hold() {
   else { holdType = t; spawn(); }
 }
 
-function cellOccupied(x, y) {
-  return x < 0 || x >= COLS || y >= ROWS || (y >= 0 && grid[y][x]);
-}
-
-function tSpinType() {
-  if (piece.type !== 'T' || !lastRot) return null;
-  const { x, y, r } = piece;
-  const corners = [[x, y], [x + 2, y], [x, y + 2], [x + 2, y + 2]].map(([cx, cy]) => cellOccupied(cx, cy));
-  if (corners.filter(Boolean).length < 3) return null;
-  const front = [[0, 1], [1, 3], [2, 3], [0, 2]][r];
-  if ((corners[front[0]] && corners[front[1]]) || lastKick === 4) return 'full';
-  return 'mini';
-}
-
 function lockPiece() {
-  const tspin = tSpinType();
-  const cells = [];
-  shapeOf(piece).forEach((row, y) => row.forEach((v, x) => {
-    if (v) {
-      const gx = piece.x + x, gy = piece.y + y;
-      if (gy >= 0) grid[gy][gx] = COLOR[piece.type];
-      cells.push([gx, gy]);
-    }
-  }));
+  const tspin = tSpinCheck(grid, piece, lastRot, lastKick);
+  const cells = pieceCells(piece);
+  cells.forEach(([gx, gy]) => { if (gy >= 0) grid[gy][gx] = COLOR[piece.type]; });
   flashes.push({ cells, t: 0, dur: 160 });
+  if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} }
   const lockedAbove = cells.every(([, gy]) => gy < HIDDEN);
   piece = null;
   holdUsed = false;
@@ -515,8 +386,9 @@ function updateStats() {
 function shake(ms, amp) { shakeT = Math.max(shakeT, ms); shakeAmp = Math.max(shakeAmp, amp); }
 
 // ---------- Flow ----------
-function showOverlay(title, html, btn) {
+function showOverlay(title, html, btn, link = true) {
   ovTitle.textContent = title; ovText.innerHTML = html; ovBtn.textContent = btn;
+  ovLink.style.display = link ? '' : 'none';
   overlay.classList.remove('hidden');
 }
 
@@ -578,7 +450,6 @@ function frame(t) {
 function update(dt) {
   if (!piece) return;
 
-  // auto-repeat for held left/right
   if (dasDir) {
     dasT += dt;
     if (dasT >= DAS) {
@@ -587,9 +458,8 @@ function update(dt) {
     }
   }
 
-  // gravity (soft drop = 20x faster)
   const g = gravityMs(level);
-  const interval = softHeld ? Math.min(g, g / 20) : g;
+  const interval = softHeld ? g / 20 : g;
   dropAcc += dt;
   while (dropAcc >= interval) {
     dropAcc -= interval;
@@ -598,7 +468,6 @@ function update(dt) {
   }
   if (softHeld) updateStats();
 
-  // lock delay
   if (onGround()) {
     lockT += dt;
     // after 15 resets the piece locks as soon as it touches down
@@ -610,9 +479,7 @@ function tickEffects(dt) {
   flashes.forEach(f => f.t += dt); flashes = flashes.filter(f => f.t < f.dur);
   trails.forEach(f => f.t += dt); trails = trails.filter(f => f.t < f.dur);
   popups.forEach(f => f.t += dt); popups = popups.filter(f => f.t < f.dur);
-  particles.forEach(p => {
-    p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.00005 * dt;
-  });
+  particles.forEach(p => { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.00005 * dt; });
   particles = particles.filter(p => p.t < p.dur);
   if (shakeT > 0) {
     shakeT -= dt;
@@ -623,20 +490,14 @@ function tickEffects(dt) {
 }
 
 // ---------- Drawing ----------
-const vy = y => (y - HIDDEN) * CELL;   // grid row -> pixel y
+const vy = y => (y - HIDDEN) * CELL;
 
 function draw() {
   const w = COLS * CELL, h = VISIBLE * CELL;
   ctx.clearRect(0, 0, w, h);
-
-  // grid
-  ctx.strokeStyle = 'rgba(0,0,0,0.06)'; ctx.lineWidth = 1;
-  for (let x = 1; x < COLS; x++) { ctx.beginPath(); ctx.moveTo(x * CELL + .5, 0); ctx.lineTo(x * CELL + .5, h); ctx.stroke(); }
-  for (let y = 1; y < VISIBLE; y++) { ctx.beginPath(); ctx.moveTo(0, y * CELL + .5); ctx.lineTo(w, y * CELL + .5); ctx.stroke(); }
-
+  drawGridLines(ctx, COLS, VISIBLE, CELL);
   if (!grid) { drawPreviews(); return; }
 
-  // stack
   for (let y = HIDDEN; y < ROWS; y++) {
     if (state === 'clearing' && clearRows.includes(y)) continue;
     for (let x = 0; x < COLS; x++) if (grid[y][x]) block(ctx, x * CELL, vy(y), CELL, grid[y][x]);
@@ -647,14 +508,12 @@ function draw() {
     const p = 1 - clearT / CLEAR_MS;
     for (const y of clearRows) {
       for (let x = 0; x < COLS; x++) {
-        const c = grid[y][x];
         if (p < 0.5) {
-          block(ctx, x * CELL, vy(y), CELL, c);
+          block(ctx, x * CELL, vy(y), CELL, grid[y][x]);
           if (Math.floor(p * 16) % 2 === 0) { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillRect(x * CELL, vy(y), CELL, CELL); }
         } else {
           const q = (p - 0.5) / 0.5;
-          const dist = Math.abs(x + 0.5 - COLS / 2) / (COLS / 2);
-          if (dist > q) {
+          if (Math.abs(x + 0.5 - COLS / 2) / (COLS / 2) > q) {
             ctx.fillStyle = '#000';
             ctx.fillRect(x * CELL, vy(y) + CELL * 0.3, CELL, CELL * 0.4);
           }
@@ -664,19 +523,11 @@ function draw() {
   }
 
   if (piece && state !== 'over') {
-    // ghost
     let gy = piece.y;
     while (!collides(shapeOf(piece), piece.x, gy + 1)) gy++;
-    shapeOf(piece).forEach((row, y) => row.forEach((v, x) => {
-      if (!v || gy + y < HIDDEN) return;
-      const px = (piece.x + x) * CELL, py = vy(gy + y);
-      ctx.fillStyle = 'rgba(0,0,0,0.06)'; ctx.fillRect(px, py, CELL, CELL);
-      ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1.5;
-      ctx.setLineDash([3, 3]); ctx.strokeRect(px + 2, py + 2, CELL - 4, CELL - 4); ctx.setLineDash([]);
-    }));
+    drawGhost(ctx, pieceCells({ ...piece, y: gy }), CELL, HIDDEN);
   }
 
-  // hard-drop trails
   for (const tr of trails) {
     const a = 1 - tr.t / tr.dur;
     for (const gx in tr.cols) {
@@ -692,23 +543,17 @@ function draw() {
     }
   }
 
-  // active piece
   if (piece && state !== 'over') {
-    // pulse slightly while resting on the stack (lock delay running)
     const resting = onGround() && state === 'playing';
     const alpha = resting ? 1 - 0.25 * (lockT / LOCK_DELAY) : 1;
-    shapeOf(piece).forEach((row, y) => row.forEach((v, x) => {
-      if (v && piece.y + y >= HIDDEN) block(ctx, (piece.x + x) * CELL, vy(piece.y + y), CELL, COLOR[piece.type], alpha);
-    }));
+    pieceCells(piece).forEach(([x, y]) => { if (y >= HIDDEN) block(ctx, x * CELL, vy(y), CELL, COLOR[piece.type], alpha); });
   }
 
-  // lock flash
   for (const f of flashes) {
     ctx.fillStyle = `rgba(255,255,255,${0.75 * (1 - f.t / f.dur)})`;
     f.cells.forEach(([x, y]) => { if (y >= HIDDEN) ctx.fillRect(x * CELL, vy(y), CELL, CELL); });
   }
 
-  // particles
   for (const p of particles) {
     const a = 1 - p.t / p.dur, s = CELL * 0.28 * (0.5 + a * 0.5);
     ctx.globalAlpha = a;
@@ -719,63 +564,41 @@ function draw() {
     ctx.globalAlpha = 1;
   }
 
-  // game over: stack turns grey row by row from the bottom
+  // game over: stack turns grey row by row from the bottom, blocks stay bevelled
   if (state === 'over') {
     const n = Math.min(VISIBLE, Math.floor(overT / 35));
     for (let i = 0; i < n; i++) {
       const y = ROWS - 1 - i;
-      for (let x = 0; x < COLS; x++) {
-        if (grid[y][x]) block(ctx, x * CELL, vy(y), CELL, GREY);
-      }
+      for (let x = 0; x < COLS; x++) if (grid[y][x]) block(ctx, x * CELL, vy(y), CELL, GREY);
     }
   }
 
-  // READY / GO
   if (state === 'ready' || (state === 'paused' && prevState === 'ready')) {
     const go = readyT < 450;
-    bigText(go ? 'GO!' : 'READY', h * 0.42, CELL * (go ? 1.6 : 1.2), 1);
+    bigText(ctx, go ? 'GO!' : 'READY', w / 2, h * 0.42, CELL * (go ? 1.6 : 1.2));
   }
 
-  // popups
   popups.forEach((pp, i) => {
     const t = pp.t, a = t > pp.dur - 300 ? (pp.dur - t) / 300 : 1;
     const pop = t < 140 ? 1.5 - 0.5 * (t / 140) : 1;
     const rise = (t / pp.dur) * CELL * 0.8;
     pp.lines.forEach((line, j) => {
       const size = (j === 0 ? CELL * 0.85 : CELL * 0.55) * pop;
-      bigText(line, h * 0.3 + j * CELL * 0.9 - rise + i * 4, size, a);
+      bigText(ctx, line, w / 2, h * 0.3 + j * CELL * 0.9 - rise + i * 4, size, a);
     });
   });
 
   drawPreviews();
 }
 
-function bigText(text, y, size, alpha) {
-  ctx.save();
-  ctx.globalAlpha = Math.max(0, alpha);
-  ctx.font = `500 ${size}px ${FONT}`;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = Math.max(3, size * 0.22);
-  ctx.strokeStyle = '#fff';
-  ctx.strokeText(text, COLS * CELL / 2, y);
-  ctx.fillStyle = '#000';
-  ctx.fillText(text, COLS * CELL / 2, y);
-  ctx.restore();
-}
-
 function drawPreviews() {
-  const hw = 4.5 * NS, hh = (compact ? 2.6 : 2.8) * NS;
+  const hw = parseFloat(holdC.style.width), hh = parseFloat(holdC.style.height);
   hctx.clearRect(0, 0, hw, hh);
   if (holdType) drawMini(hctx, holdType, hw / 2, hh / 2, NS, holdUsed ? 0.3 : 1);
 
-  if (compact) {
-    nctx.clearRect(0, 0, 3 * hw, hh);
-    if (queue) queue.slice(0, 3).forEach((t, i) => drawMini(nctx, t, hw * i + hw / 2, hh / 2, NS));
-  } else {
-    nctx.clearRect(0, 0, hw, NEXT_COUNT * hh);
-    if (queue) queue.slice(0, NEXT_COUNT).forEach((t, i) => drawMini(nctx, t, hw / 2, hh * i + hh / 2, NS));
-  }
+  const nw = parseFloat(nextC.style.width), slot = parseFloat(nextC.style.height) / nextShown;
+  nctx.clearRect(0, 0, nw, slot * nextShown);
+  if (queue) queue.slice(0, nextShown).forEach((t, i) => drawMini(nctx, t, nw / 2, slot * i + slot / 2, NS));
 }
 
 // ---------- Input: keyboard ----------
@@ -803,23 +626,25 @@ document.addEventListener('keydown', e => {
   if (a) e.preventDefault();
   if (e.repeat) return;
   if (e.key === 'Escape' || e.key === 'p' || e.key === 'P' || e.key === 'F1') { e.preventDefault(); togglePause(); return; }
-  if (e.key === 'Enter' && (state === 'idle' || state === 'over')) { if (state === 'idle' || !overlay.classList.contains('hidden')) start(); return; }
-  if (e.key === 'Enter' && state === 'paused') { togglePause(); return; }
+  if (e.key === 'Enter') {
+    if (state === 'paused') togglePause();
+    else if (state === 'idle' || (state === 'over' && !overlay.classList.contains('hidden'))) start();
+    return;
+  }
   if (!a) return;
   if (a === 'left' || a === 'right') {
     heldKeys[a] = true;
     dasDir = a === 'left' ? -1 : 1; dasT = 0; arrT = 0;
     act(a);
-  } else if (a === 'soft') {
-    softHeld = true;
-  } else act(a);
+  } else if (a === 'soft') softHeld = true;
+  else act(a);
 });
 
 document.addEventListener('keyup', e => {
   const a = KEYMAP[e.key];
   if (a === 'left' || a === 'right') {
     heldKeys[a] = false;
-    if (heldKeys.left) dasDir = -1; else if (heldKeys.right) dasDir = 1; else dasDir = 0;
+    dasDir = heldKeys.left ? -1 : heldKeys.right ? 1 : 0;
     dasT = 0; arrT = 0;
   } else if (a === 'soft') softHeld = false;
 });
@@ -828,62 +653,29 @@ window.addEventListener('blur', () => {
   heldKeys.left = heldKeys.right = false; dasDir = 0; softHeld = false;
   if (['playing', 'clearing', 'ready'].includes(state)) togglePause();
 });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && ['playing', 'clearing', 'ready'].includes(state)) togglePause();
+});
 
 ovBtn.addEventListener('click', () => { state === 'paused' ? togglePause() : start(); });
-overlay.addEventListener('click', e => { if (e.target !== ovBtn) ovBtn.click(); });
+overlay.addEventListener('click', e => { if (e.target === overlay || e.target.closest('h2, p')) ovBtn.click(); });
 pauseBtn.addEventListener('click', togglePause);
 
 // ---------- Input: touch ----------
-// tap = rotate right, two-finger tap = rotate left, drag sideways = move,
-// drag down = soft drop, flick down = hard drop, swipe up = hold.
-let touch = null;
-document.addEventListener('touchstart', e => {
-  if (e.target.closest('button') || !['playing', 'clearing'].includes(state)) return;
-  e.preventDefault();
-  if (touch && e.touches.length === 2) { touch.two = true; return; }
-  if (e.touches.length > 1) return;
-  const t = e.touches[0], now = performance.now();
-  touch = { x0: t.clientX, y0: t.clientY, ax: t.clientX, ay: t.clientY, t0: now,
-            axis: null, lastY: t.clientY, lastT: now, vy: 0, two: false, dy: 0 };
-}, { passive: false });
-
-document.addEventListener('touchmove', e => {
-  if (!touch) return;
-  e.preventDefault();
-  if (touch.two || state !== 'playing') return;
-  const t = e.touches[0];
-  const dx = t.clientX - touch.x0, dy = t.clientY - touch.y0;
-  touch.dy = dy;
-  if (!touch.axis && Math.hypot(dx, dy) > 10) touch.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-
-  const step = CELL * 0.85;
-  if (touch.axis === 'x') {
-    while (t.clientX - touch.ax >= step) { tryMove(1); touch.ax += step; }
-    while (touch.ax - t.clientX >= step) { tryMove(-1); touch.ax -= step; }
-  } else if (touch.axis === 'y') {
-    while (t.clientY - touch.ay >= step) { touch.ay += step; softStep(); }
-  }
-  const now = performance.now();
-  touch.vy = (t.clientY - touch.lastY) / Math.max(1, now - touch.lastT);
-  touch.lastY = t.clientY; touch.lastT = now;
-  updateStats();
-}, { passive: false });
-
-document.addEventListener('touchend', e => {
-  if (!touch) return;
-  e.preventDefault();
-  if (e.touches.length > 0) return;
-  const dt = performance.now() - touch.t0;
-  if (touch.two) { if (dt < 400) act('ccw'); }
-  else if (!touch.axis && dt < 300) act('cw');
-  else if (touch.axis === 'y' && touch.vy > 0.9) act('drop');
-  else if (touch.axis === 'y' && touch.dy < -CELL * 1.5) act('hold');
-  touch = null;
-}, { passive: false });
-
-document.addEventListener('touchcancel', () => { touch = null; });
+attachTouch({
+  active: () => state === 'playing' || state === 'clearing',
+  cell: () => CELL,
+  holdEl: $('hold-box'),
+  move: dx => act(dx < 0 ? 'left' : 'right'),
+  soft: () => act('soft'),
+  hard: () => act('drop'),
+  cw: () => act('cw'),
+  ccw: () => act('ccw'),
+  hold: () => act('hold'),
+});
 
 window.addEventListener('resize', sizeCanvases);
+ovText.innerHTML = START_TEXT;
 sizeCanvases();
 requestAnimationFrame(frame);
 </script>

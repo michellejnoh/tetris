@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Tetris Skills Course</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    background: #fff; color: #000;
+    -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  a { color: inherit; }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
+  h1 { font-weight: 500; font-size: 34px; letter-spacing: -0.5px; }
+  header a { font-size: 13px; text-decoration: none; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+  .tab {
+    font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
+    background: #fff; color: #000; border: 1.5px solid #000;
+    padding: 8px 12px; cursor: pointer; text-transform: none;
+  }
+  .tab.active { background: #000; color: #fff; }
+  .tab .check { margin-left: 6px; }
+
+  .lesson { display: grid; grid-template-columns: 1fr auto; gap: 36px; align-items: start; }
+  .info .num { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 8px; }
+  .info h2 { font-weight: 500; font-size: 28px; letter-spacing: -0.3px; margin-bottom: 14px; }
+  .info .why { font-size: 15px; line-height: 1.6; color: #333; margin-bottom: 18px; }
+  .info .label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin: 18px 0 6px; }
+  .info .how { font-size: 14px; line-height: 1.7; }
+  .info .goal { font-size: 16px; line-height: 1.5; border-left: 3px solid #000; padding-left: 12px; }
+  .buttons { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
+  button {
+    font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; background: #000; color: #fff; border: 1.5px solid #000;
+    padding: 10px 16px; cursor: pointer;
+  }
+  button.ghost { background: #fff; color: #000; }
+  button:disabled { opacity: 0.3; cursor: default; }
+  .msg { margin-top: 18px; font-size: 14px; line-height: 1.6; min-height: 46px; }
+  .msg.ok { color: #000; }
+  .msg.no { color: #8C3B57; }
+
+  .play { display: flex; gap: 14px; align-items: flex-start; }
+  .board-wrap { position: relative; touch-action: none; }
+  canvas#board { display: block; border: 2px solid #000; background: #fff; }
+  .side { display: flex; flex-direction: column; gap: 14px; }
+  .side .label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 4px; }
+  #hold-box { border: 1.5px solid #000; padding: 6px 4px 4px; text-align: center; }
+  #hold-box .label { margin-bottom: 2px; }
+  canvas#hold, canvas#next { display: block; margin: 0 auto; }
+  .caption {
+    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; pointer-events: none;
+  }
+  .caption span {
+    display: inline-block; background: #000; color: #fff; font-size: 12px; letter-spacing: 1px;
+    text-transform: uppercase; padding: 6px 10px;
+  }
+  .caption:empty { display: none; }
+  .touch-only { display: none; }
+
+  @media (max-width: 700px), (pointer: coarse) {
+    body { touch-action: manipulation; }
+    .play { touch-action: none; }
+    .page { padding: calc(env(safe-area-inset-top) + 10px) 10px 10px; }
+    header { margin-bottom: 10px; }
+    h1 { font-size: 20px; }
+    .tabs { gap: 6px; margin-bottom: 10px; flex-wrap: nowrap; }
+    .tab { padding: 6px 9px; }
+    .tab .name { display: none; }
+    .lesson { grid-template-columns: 1fr; gap: 10px; }
+    .info .num, .info .label.how-label { display: none; }
+    .info .why { font-size: 13px; line-height: 1.5; margin-bottom: 10px; color: #444; }
+    .info h2 { font-size: 18px; margin-bottom: 6px; }
+    .info .goal { font-size: 13px; padding-left: 8px; }
+    .info .how { font-size: 12px; color: #555; margin-top: 6px; }
+    .buttons { margin-top: 8px; }
+    button { padding: 7px 10px; font-size: 11px; }
+    .msg { margin-top: 6px; font-size: 12px; min-height: 36px; }
+    .play { justify-content: center; order: -1; }
+    .keys-only { display: none; }
+    .touch-only { display: inline; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Skills course</h1>
+    <a href="index.html">Play Tetris</a>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <section class="lesson">
+    <div class="info">
+      <div class="num" id="num"></div>
+      <h2 id="title"></h2>
+      <p class="why" id="why"></p>
+      <div class="label">Goal</div>
+      <p class="goal" id="goal"></p>
+      <div class="label how-label">How</div>
+      <p class="how" id="how"></p>
+      <div class="buttons">
+        <button id="demo-btn" class="ghost">Show me</button>
+        <button id="reset-btn" class="ghost">Restart</button>
+        <button id="next-btn">Next lesson</button>
+      </div>
+      <p class="msg" id="msg"></p>
+    </div>
+
+    <div class="play">
+      <div class="board-wrap">
+        <canvas id="board"></canvas>
+        <div class="caption" id="caption"></div>
+      </div>
+      <div class="side">
+        <div id="hold-box">
+          <div class="label">Hold</div>
+          <canvas id="hold"></canvas>
+        </div>
+        <div>
+          <div class="label">Next</div>
+          <canvas id="next"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="core.js"></script>
+<script>
+// ---------- Lessons ----------
+// Boards are the 10 visible rows, top to bottom.  x = block, * = target spot (empty), . = empty
+const E = '..........';
+const LESSONS = [
+  {
+    name: 'Move & drop',
+    skill: 'Ghost piece and hard drop',
+    why: 'The dashed outline under your piece is the ghost: it shows exactly where the piece will land. Line the ghost up with the gap, then hard drop so the piece lands instantly.',
+    keys: '<b>Left / Right</b> to move, <b>Space</b> to hard drop.',
+    touch: 'Drag sideways to move, flick down to drop.',
+    goal: 'Drop the O piece into the marked gap.',
+    board: [E, E, E, E, E, E, E, E, 'xxxxxx**xx', 'xxxxxx**xx'],
+    pieces: ['O'],
+    check: 'target',
+    demo: ['right', 'right', 'drop'],
+    win: 'Two lines cleared. Always look at the ghost, not the piece.',
+  },
+  {
+    name: 'Rotate left',
+    skill: 'Rotating both ways',
+    why: 'Pieces turn both ways. Turning right three times is the same as turning left once, but it takes three presses and wastes time. Good players pick the shorter turn.',
+    keys: '<b>Up / X</b> rotates right, <b>Z</b> rotates left.',
+    touch: 'Tap to rotate right, tap with two fingers to rotate left.',
+    goal: 'Fit the L into the marked spot using only one rotation.',
+    board: [E, E, E, E, E, E, E, '**........', 'x*xxxxxxxx', 'x*xxxxxxxx'],
+    pieces: ['L'],
+    check: 'target',
+    maxRotations: 1,
+    demo: ['ccw', 'left', 'left', 'left', 'drop'],
+    win: 'One press instead of three. That saved time adds up fast at higher levels.',
+  },
+  {
+    name: 'Hold',
+    skill: 'Saving a piece for later',
+    why: 'Hold puts the current piece aside and gives you the next one. You can swap once per piece. Use it when the piece you have doesn\'t fit but one in the Next queue does.',
+    keys: '<b>C</b> or <b>Shift</b> to hold.',
+    touch: 'Tap the Hold box, or flick up.',
+    goal: 'Score a Tetris (4 lines at once) with the first piece you place.',
+    board: [E, E, E, E, E, E, 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.'],
+    pieces: ['S', 'I'],
+    check: 'tetris',
+    demo: ['hold', 'cw', 'right', 'right', 'right', 'right', 'drop'],
+    win: 'TETRIS! Keeping one column open for an I piece is the classic way to score big.',
+  },
+  {
+    name: 'Tuck',
+    skill: 'Soft drop and slide',
+    why: 'A hard drop locks the piece at once. A soft drop lowers it and lets you keep moving, so you can slide it sideways into a space under an overhang before it locks.',
+    keys: '<b>Down</b> to soft drop, then <b>Left / Right</b>, then <b>Space</b> to lock.',
+    touch: 'Slide down slowly, drag sideways, then flick down to lock.',
+    goal: 'Get the O piece into the marked space under the ledge.',
+    board: [E, E, E, E, E, E, E, 'xxxxxx....', 'xxxx**....', 'xxxx**....'],
+    pieces: ['O'],
+    check: 'target',
+    demo: ['right', 'right', 'softmax', 'left', 'left', 'drop'],
+    win: 'Tucked. In the real game you have about half a second after landing to do this.',
+  },
+  {
+    name: 'T-spin double',
+    skill: 'Spinning into a slot',
+    why: 'When a T piece can\'t drop straight into a slot, rotate it at the bottom and it will kick into place. That is a T-spin. A T-spin that clears two lines scores 1,200 points, more than a Triple.',
+    keys: '<b>Z</b> to point the T left, <b>Down</b> to the bottom, then <b>Z</b> again to spin it in.',
+    touch: 'Two-finger tap, slide down, two-finger tap again, then flick down.',
+    goal: 'Spin the T into the slot and clear two lines.',
+    board: [E, E, E, E, E, E, E, 'xxx..xxxxx', 'xxx***xxxx', 'xxxx*xxxxx'],
+    pieces: ['T'],
+    check: 'tsd',
+    demo: ['ccw', 'softmax', 'ccw', 'drop'],
+    win: 'T-SPIN DOUBLE. Look for slots with a roof over one corner: that is where a T-spin goes.',
+  },
+  {
+    name: 'Perfect clear',
+    skill: 'Planning with the Next queue',
+    why: 'The Next queue shows what is coming, so you can plan several pieces ahead. Clear every block on the board and you get a huge Perfect Clear bonus.',
+    keys: 'Check the Next queue before each move.',
+    touch: 'Check the Next queue before each move.',
+    goal: 'Use the three pieces to clear the whole board.',
+    board: [E, E, E, E, E, E, E, 'xxxxxx....', 'xxxxxx....', 'xxxxxx....'],
+    pieces: ['I', 'L', 'L'],
+    check: 'pc',
+    demo: ['right', 'right', 'right', 'drop', 'right', 'right', 'right', 'right', 'drop', 'cw', 'cw', 'right', 'right', 'right', 'drop'],
+    win: 'PERFECT CLEAR. Nothing left on the board.',
+  },
+];
+
+const ACTION_LABEL = {
+  left: 'Move left', right: 'Move right', soft: 'Soft drop', softmax: 'Soft drop',
+  drop: 'Hard drop', cw: 'Rotate right', ccw: 'Rotate left', hold: 'Hold',
+};
+
+// ---------- Setup ----------
+const VISIBLE = 10, ROWS = VISIBLE + HIDDEN;
+const $ = id => document.getElementById(id);
+const board = $('board'), ctx = board.getContext('2d');
+const holdC = $('hold'), hctx = holdC.getContext('2d');
+const nextC = $('next'), nctx = nextC.getContext('2d');
+const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
+let CELL = 30, NS = 14, compact = false;
+let done = {};
+try { done = JSON.parse(localStorage.getItem('tetris-skills') || '{}'); } catch (e) {}
+
+let li = 0, L;                       // lesson index, lesson
+let grid, targets, queue, piece, holdType, holdUsed;
+let rotations, locks, lastRot, lastKick;
+let status = 'play';                 // play | clearing | won | demo
+let clearRows = [], clearT = 0, popups = [], flashes = [];
+let demoTimer = null, resetTimer = null;
+
+const palette = Object.values(COLOR);
+
+function size() {
+  compact = window.matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+  if (compact) {
+    const W = window.innerWidth, H = window.innerHeight;
+    // board + side column (about 1.85 cells) + gaps must fit the width
+    CELL = Math.floor(Math.min((W - 48) / 11.85, (H - 230) / VISIBLE));
+    CELL = Math.max(18, Math.min(36, CELL));
+    NS = Math.max(8, Math.round(CELL * 0.42));
+  } else {
+    CELL = 32; NS = 16;
+  }
+  setCanvas(board, ctx, COLS * CELL, VISIBLE * CELL);
+  setCanvas(holdC, hctx, 4.4 * NS, 2.4 * NS);
+  setCanvas(nextC, nctx, 4.4 * NS, 3 * 2.8 * NS);
+  draw();
+}
+
+function renderTabs() {
+  $('tabs').innerHTML = LESSONS.map((l, i) =>
+    `<button class="tab${i === li ? ' active' : ''}" data-i="${i}">${i + 1}<span class="name"> ${l.name}</span>${done[i] ? '<span class="check">✓</span>' : ''}</button>`
+  ).join('');
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => openLesson(+b.dataset.i)));
+}
+
+function openLesson(i) {
+  stopDemo();
+  li = i; L = LESSONS[i];
+  $('num').textContent = `Lesson ${i + 1} of ${LESSONS.length} · ${L.skill}`;
+  $('title').textContent = L.name;
+  $('why').textContent = L.why;
+  $('goal').textContent = L.goal;
+  $('how').innerHTML = isTouch ? L.touch : L.keys;
+  $('next-btn').disabled = i === LESSONS.length - 1;
+  renderTabs();
+  reset();
+  setMsg('');
+}
+
+function reset() {
+  clearTimeout(resetTimer); resetTimer = null;
+  grid = []; targets = [];
+  for (let y = 0; y < HIDDEN; y++) grid.push(Array(COLS).fill(null));
+  L.board.forEach((row, ry) => {
+    const y = ry + HIDDEN;
+    grid.push([...row].map((ch, x) => ch === 'x' ? palette[(x * 3 + y * 5) % palette.length] : null));
+    [...row].forEach((ch, x) => { if (ch === '*') targets.push([x, y]); });
+  });
+  queue = [...L.pieces];
+  holdType = null; holdUsed = false;
+  rotations = 0; locks = 0;
+  popups = []; flashes = []; clearRows = [];
+  status = 'play';
+  spawn();
+}
+
+function spawn(type) {
+  if (!type) type = queue.shift();
+  if (!type) { piece = null; return; }
+  piece = { type, r: 0, x: type === 'O' ? 4 : 3, y: 0 };
+  lastRot = false; lastKick = 0;
+  if (!collidesIn(grid, ROT[type][0], piece.x, 1)) piece.y = 1;
+}
+
+const ground = () => collidesIn(grid, ROT[piece.type][piece.r], piece.x, piece.y + 1);
+
+function doAction(a) {
+  if (!piece) return;
+  if (a === 'left' || a === 'right') {
+    const dx = a === 'left' ? -1 : 1;
+    if (!collidesIn(grid, ROT[piece.type][piece.r], piece.x + dx, piece.y)) { piece.x += dx; lastRot = false; }
+  } else if (a === 'cw' || a === 'ccw') {
+    const r = srsRotate(grid, piece, a === 'cw' ? 1 : -1);
+    if (r) { piece.x = r.x; piece.y = r.y; piece.r = r.r; lastRot = true; lastKick = r.kick; rotations++; }
+  } else if (a === 'soft' || a === 'softmax') {
+    if (!ground()) { piece.y++; lastRot = false; }
+  } else if (a === 'drop') {
+    let moved = false;
+    while (!ground()) { piece.y++; moved = true; }
+    if (moved) lastRot = false;
+    lock();
+  } else if (a === 'hold') {
+    if (holdUsed) return;
+    holdUsed = true;
+    const t = piece.type;
+    if (holdType) { const h = holdType; holdType = t; spawn(h); }
+    else { holdType = t; spawn(); }
+  }
+}
+
+// ---------- Locking and checking the goal ----------
+function lock() {
+  const tspin = tSpinCheck(grid, piece, lastRot, lastKick);
+  const cells = pieceCells(piece);
+  cells.forEach(([x, y]) => { if (y >= 0) grid[y][x] = COLOR[piece.type]; });
+  flashes.push({ cells, t: 0, dur: 160 });
+  piece = null; holdUsed = false; locks++;
+
+  const full = [];
+  for (let y = 0; y < ROWS; y++) if (grid[y].every(c => c)) full.push(y);
+  const n = full.length;
+
+  let result = null, why = '';   // 'win' | 'fail' | null (keep going)
+  if (L.check === 'target') {
+    const key = c => c.join(',');
+    const hit = cells.length === targets.length && cells.every(c => targets.some(t => key(t) === key(c)));
+    if (!hit) {
+      result = 'fail';
+      why = L.name === 'Tuck'
+        ? 'It locked before getting under the ledge. Soft drop to the floor first, then slide in.'
+        : 'Not in the marked spot. Watch the ghost outline before you drop.';
+    } else if (L.maxRotations && rotations > L.maxRotations) {
+      result = 'fail'; why = `Right spot, but you used ${rotations} rotations. Try rotating left once instead.`;
+    } else result = 'win';
+  } else if (L.check === 'tetris') {
+    if (n === 4) result = 'win';
+    else { result = 'fail'; why = 'The S piece doesn\'t help here. Hold it, and the I piece comes out instead.'; }
+  } else if (L.check === 'tsd') {
+    if (tspin === 'full' && n === 2) result = 'win';
+    else if (!lastRot) { result = 'fail'; why = 'That was a plain drop, not a spin. Point the T left, soft drop to the bottom, then rotate left again.'; }
+    else { result = 'fail'; why = 'It spun, but not into the slot. Point the T left first, then rotate left once more at the very bottom.'; }
+  }
+
+  if (n) {
+    clearRows = full; clearT = 380; status = 'clearing';
+    const label = (tspin === 'full' ? 'T-SPIN ' : '') + ['', 'SINGLE', 'DOUBLE', 'TRIPLE', 'TETRIS'][n];
+    if (n >= 2 || tspin) popups.push({ text: n === 4 ? 'TETRIS' : label, t: 0, dur: 1200 });
+  }
+  pending = { result, why };
+  if (!n) settle();
+}
+
+let pending = null;
+function settle() {
+  const { result, why } = pending;
+  pending = null;
+  if (L.check === 'pc') {
+    const empty = grid.every(r => r.every(c => !c));
+    if (empty) return win(true);
+    if (!queue.length) return fail('Some blocks are left. Plan the pieces so every row finishes together.');
+    status = status === 'demo' ? 'demo' : 'play';
+    spawn();
+    return;
+  }
+  if (result === 'win') win();
+  else if (result === 'fail') fail(why);
+  else { status = status === 'demo' ? 'demo' : 'play'; spawn(); }
+}
+
+function win(pc) {
+  const wasDemo = demoRunning;
+  status = 'won';
+  if (pc) popups.push({ text: 'PERFECT CLEAR', t: 0, dur: 1400 });
+  popups.push({ text: 'CLEAR!', t: -500, dur: 1400 });
+  if (wasDemo) {
+    setMsg('That\'s how it\'s done. Your turn now.', 'ok');
+    demoRunning = false;
+    $('caption').innerHTML = '';
+    resetTimer = setTimeout(reset, 1600);
+    return;
+  }
+  done[li] = true;
+  try { localStorage.setItem('tetris-skills', JSON.stringify(done)); } catch (e) {}
+  renderTabs();
+  setMsg((li === LESSONS.length - 1 ? 'Course complete! ' : 'Cleared! ') + L.win, 'ok');
+}
+
+function fail(why) {
+  status = 'won';   // freeze input until reset
+  setMsg(why + ' Resetting…', 'no');
+  resetTimer = setTimeout(() => { reset(); setMsg('Try again.'); }, 1600);
+}
+
+function setMsg(text, cls = '') {
+  const m = $('msg'); m.textContent = text; m.className = 'msg ' + cls;
+}
+
+// ---------- Demo ("Show me") ----------
+let demoRunning = false;
+function stopDemo() {
+  clearTimeout(demoTimer); demoTimer = null; demoRunning = false;
+  clearTimeout(resetTimer); resetTimer = null;
+  $('caption').innerHTML = '';
+}
+
+function runDemo() {
+  stopDemo();
+  reset();
+  setMsg('Watch the moves, then try it yourself.', '');
+  demoRunning = true; status = 'demo';
+  const steps = [...L.demo];
+  let i = 0;
+  const tick = () => {
+    if (!demoRunning) return;
+    if (status === 'clearing') { demoTimer = setTimeout(tick, 120); return; }
+    if (i >= steps.length || !piece) return;
+    const a = steps[i];
+    $('caption').innerHTML = `<span>${ACTION_LABEL[a]}</span>`;
+    if (a === 'softmax' && piece && !ground()) { doAction('soft'); demoTimer = setTimeout(tick, 140); return; }
+    if (a !== 'softmax') doAction(a);
+    i++;
+    if (!demoRunning) return;   // the demo just finished
+    demoTimer = setTimeout(tick, a === 'drop' ? 700 : 520);
+  };
+  demoTimer = setTimeout(tick, 600);
+}
+
+// ---------- Loop and drawing ----------
+let lastT = 0;
+function frame(t) {
+  const dt = Math.min(50, t - (lastT || t)); lastT = t;
+  popups.forEach(p => p.t += dt); popups = popups.filter(p => p.t < p.dur);
+  flashes.forEach(f => f.t += dt); flashes = flashes.filter(f => f.t < f.dur);
+  if (status === 'clearing') {
+    clearT -= dt;
+    if (clearT <= 0) {
+      for (const y of clearRows) { grid.splice(y, 1); grid.unshift(Array(COLS).fill(null)); }
+      targets = [];
+      clearRows = [];
+      status = demoRunning ? 'demo' : 'play';
+      settle();
+    }
+  }
+  draw();
+  requestAnimationFrame(frame);
+}
+
+const py = y => (y - HIDDEN) * CELL;
+
+function draw() {
+  if (!grid) return;
+  const w = COLS * CELL, h = VISIBLE * CELL;
+  ctx.clearRect(0, 0, w, h);
+  drawGridLines(ctx, COLS, VISIBLE, CELL);
+
+  // target spots
+  ctx.fillStyle = 'rgba(0,0,0,0.08)';
+  targets.forEach(([x, y]) => { if (!grid[y][x]) ctx.fillRect(x * CELL + 3, py(y) + 3, CELL - 6, CELL - 6); });
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+  targets.forEach(([x, y]) => { if (!grid[y][x]) ctx.strokeRect(x * CELL + 3, py(y) + 3, CELL - 6, CELL - 6); });
+
+  for (let y = HIDDEN; y < ROWS; y++)
+    for (let x = 0; x < COLS; x++) {
+      if (!grid[y][x]) continue;
+      if (status === 'clearing' && clearRows.includes(y)) {
+        const blink = Math.floor((380 - clearT) / 50) % 2 === 0;
+        block(ctx, x * CELL, py(y), CELL, grid[y][x]);
+        if (blink) { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillRect(x * CELL, py(y), CELL, CELL); }
+      } else block(ctx, x * CELL, py(y), CELL, grid[y][x]);
+    }
+
+  if (piece) {
+    let gy = piece.y;
+    while (!collidesIn(grid, ROT[piece.type][piece.r], piece.x, gy + 1)) gy++;
+    drawGhost(ctx, pieceCells({ ...piece, y: gy }), CELL, HIDDEN);
+    pieceCells(piece).forEach(([x, y]) => { if (y >= HIDDEN) block(ctx, x * CELL, py(y), CELL, COLOR[piece.type]); });
+  }
+
+  for (const f of flashes) {
+    ctx.fillStyle = `rgba(255,255,255,${0.75 * (1 - f.t / f.dur)})`;
+    f.cells.forEach(([x, y]) => { if (y >= HIDDEN) ctx.fillRect(x * CELL, py(y), CELL, CELL); });
+  }
+
+  popups.forEach((p, i) => {
+    if (p.t < 0) return;
+    const a = p.t > p.dur - 300 ? (p.dur - p.t) / 300 : 1;
+    const pop = p.t < 140 ? 1.5 - 0.5 * (p.t / 140) : 1;
+    bigText(ctx, p.text, w / 2, h * 0.32 + i * CELL * 1.1, CELL * 0.85 * pop, a);
+  });
+
+  // hold + next
+  const hw = parseFloat(holdC.style.width), hh = parseFloat(holdC.style.height);
+  hctx.clearRect(0, 0, hw, hh);
+  if (holdType) drawMini(hctx, holdType, hw / 2, hh / 2, NS, holdUsed ? 0.3 : 1);
+  const nw = parseFloat(nextC.style.width), slot = parseFloat(nextC.style.height) / 3;
+  nctx.clearRect(0, 0, nw, slot * 3);
+  queue.slice(0, 3).forEach((t, i) => drawMini(nctx, t, nw / 2, slot * i + slot / 2, NS));
+}
+
+// ---------- Input ----------
+function act(a) {
+  if (status !== 'play' || !piece) return;
+  doAction(a);
+}
+
+const KEYMAP = {
+  ArrowLeft: 'left', ArrowRight: 'right', ArrowDown: 'soft',
+  ArrowUp: 'cw', x: 'cw', X: 'cw', z: 'ccw', Z: 'ccw', Control: 'ccw',
+  ' ': 'drop', c: 'hold', C: 'hold', Shift: 'hold',
+};
+document.addEventListener('keydown', e => {
+  const a = KEYMAP[e.key];
+  if (!a) { if (e.key === 'r' || e.key === 'R') { stopDemo(); reset(); setMsg(''); } return; }
+  e.preventDefault();
+  if (e.repeat && !['left', 'right', 'soft'].includes(a)) return;
+  act(a);
+});
+
+attachTouch({
+  active: () => status === 'play' && !!piece,
+  cell: () => CELL,
+  holdEl: $('hold-box'),
+  area: document.querySelector('.play'),
+  move: dx => act(dx < 0 ? 'left' : 'right'),
+  soft: () => act('soft'),
+  hard: () => act('drop'),
+  cw: () => act('cw'),
+  ccw: () => act('ccw'),
+  hold: () => act('hold'),
+});
+
+$('demo-btn').addEventListener('click', runDemo);
+$('reset-btn').addEventListener('click', () => { stopDemo(); reset(); setMsg(''); });
+$('next-btn').addEventListener('click', () => { if (li < LESSONS.length - 1) openLesson(li + 1); });
+
+window.addEventListener('resize', size);
+const firstOpen = LESSONS.findIndex((_, i) => !done[i]);
+openLesson(firstOpen === -1 ? 0 : firstOpen);
+size();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
