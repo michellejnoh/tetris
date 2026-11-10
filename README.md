@@ -22,12 +22,12 @@ Open `index.html` in a browser to play.
 
 ## Skills course
 
-Four chapters of minigame lessons on expert techniques, each with a "Show me" demo and up to three stars. Every board was checked with a solver that runs the same rules as the game.
+A spin-focused course: short minigame lessons, each with a "Show me" demo and up to three stars. Pieces fall and lock on their own, just like in the game. Every board was checked with a solver that runs the same rules as the game.
 
-1. **Foundations (기본기):** ghost and hard drop, rotating both ways, hold, tucking under a ledge, and a finesse drill that scores you on using the fewest inputs
-2. **T-spins (T스핀):** mini, single (TSS), double (TSD), triple (TST), and a drill of random T-spin slots
-3. **Attack (공격):** back-to-back, combo (REN) in a 4-wide well, perfect clears, a perfect clear puzzle with a Z-spin, and an endless 4-wide combo drill
-4. **Openers (빌드):** a first-bag opener that builds a T-spin double (개막TSD)
+1. **T-spin basics (T스핀 기초):** mini, single (TSS), double (TSD), triple (TST)
+2. **Advanced T-spins (T스핀 심화):** Fin TSD (the deep kick from a downward T), double-then-triple back-to-back (the idea behind the DT cannon), and a first-bag TSD opener (개막TSD)
+3. **Other spins (S·Z·L·J·I 스핀):** one lesson per piece, each a spot only a spin can reach, plus a perfect-clear puzzle that ends with a Z-spin
+4. **Drills (연습):** ten random T-spin slots, and ten random spin spots for any piece
 
 ## Rules
 

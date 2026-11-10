@@ -154,72 +154,18 @@
 const E = '..........';
 const W4 = 'xxxxxx....';
 const CHAPTERS = [
-  { name: 'Foundations', ko: '기본기' },
-  { name: 'T-spins', ko: 'T스핀' },
-  { name: 'Attack', ko: '공격' },
-  { name: 'Openers', ko: '빌드' },
+  { name: 'T-spin basics', ko: 'T스핀 기초' },
+  { name: 'Advanced T-spins', ko: 'T스핀 심화' },
+  { name: 'Other spins', ko: 'S·Z·L·J·I 스핀' },
+  { name: 'Drills', ko: '연습' },
 ];
 
-const LESSONS = [
-  // ---------------- Foundations ----------------
-  {
-    ch: 0, name: 'Ghost & hard drop', term: '하드 드롭 · 고스트',
-    why: ['The dashed outline under your piece is the ghost: it shows exactly where the piece will land. Experts never watch the falling piece. They line up the ghost and hard drop, which places the piece instantly.'],
-    keys: '<b>Left / Right</b> move, <b>Space</b> hard drop.',
-    touch: 'Drag sideways to move, flick down to drop.',
-    goal: 'Drop the O piece into the marked gap.',
-    board: [E, E, E, E, E, E, E, E, 'xxxxxx**xx', 'xxxxxx**xx'],
-    pieces: ['O'], check: 'target',
-    demo: ['right', 'right', 'drop'],
-    win: 'Two lines. Look at the ghost, not the piece.',
-  },
-  {
-    ch: 0, name: 'Rotate both ways', term: '역회전',
-    why: ['Every piece turns both ways. Three right turns equal one left turn, but cost three presses. Using both rotate keys is the first step towards fast, clean play.'],
-    keys: '<b>Up / X</b> rotate right, <b>Z</b> rotate left.',
-    touch: 'Tap to rotate right, two-finger tap to rotate left.',
-    goal: 'Fit the L into the marked spot with only one rotation.',
-    board: [E, E, E, E, E, E, E, '**........', 'x*xxxxxxxx', 'x*xxxxxxxx'],
-    pieces: ['L'], check: 'target', maxRotations: 1,
-    demo: ['ccw', 'left', 'left', 'left', 'drop'],
-    win: 'One press instead of three.',
-  },
-  {
-    ch: 0, name: 'Hold', term: '홀드',
-    why: ['Hold sets the current piece aside and gives you the next one. You can swap once per piece. Use it to save an I for your Tetris well, or a T for your T-spin slot.'],
-    keys: '<b>C</b> or <b>Shift</b> hold.',
-    touch: 'Tap the Hold box, or flick up.',
-    goal: 'Score a Tetris (4 lines at once) with the first piece you place.',
-    board: [E, E, E, E, E, E, 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.'],
-    pieces: ['S', 'I'], check: 'tetrisFirst',
-    demo: ['hold', 'cw', 'right', 'right', 'right', 'right', 'drop'],
-    win: 'TETRIS. Keeping one column open for the I is the classic way to score.',
-  },
-  {
-    ch: 0, name: 'Tuck', term: '턱 넣기 · 소프트 드롭',
-    why: ['A hard drop locks the piece at once. A soft drop lowers it and keeps it moving, so you can slide it sideways under a ledge before it locks. In the real game you have half a second after landing.'],
-    keys: '<b>Down</b> soft drop, then <b>Left / Right</b>, then <b>Space</b> to lock.',
-    touch: 'Slide down slowly, drag sideways, then flick down to lock.',
-    goal: 'Get the O piece into the marked space under the ledge.',
-    board: [E, E, E, E, E, E, E, 'xxxxxx....', 'xxxx**....', 'xxxx**....'],
-    pieces: ['O'], check: 'target',
-    demo: ['right', 'right', 'softmax', 'left', 'left', 'drop'],
-    fail: 'It locked before getting under the ledge. Soft drop to the floor first, then slide in.',
-    win: 'Tucked. This move is also how T-spins get into their slots.',
-  },
-  {
-    ch: 0, name: 'Finesse drill', term: '최소조작 (Finesse)', drill: 'finesse',
-    why: ['Finesse means placing every piece with the fewest possible key presses. Top players learn the shortest input for every spot by heart, because extra presses cost time and cause misdrops.',
-          'Holding Left or Right slides the piece all the way to the wall (DAS). That counts as one input, so a spot next to the wall is often only one press away.'],
-    keys: 'Move and rotate with as few presses as you can. Holding a direction to reach the wall counts as one press.',
-    touch: 'Each drag, tap or flick counts as one input. Finesse is mostly a keyboard skill, but you can still practise.',
-    goal: 'Place 12 pieces on their outlines using the fewest inputs.',
-    stars: ['Finish all 12', '9 or more perfect', 'All 12 perfect'],
-  },
+const SPIN_FAIL = 'Not in the marked spot. A plain drop can\'t reach it: lower the piece next to the gap, then rotate it in.';
 
-  // ---------------- T-spins ----------------
+const LESSONS = [
+  // ---------------- T-spin basics ----------------
   {
-    ch: 1, name: 'T-spin mini', term: 'T스핀 미니',
+    ch: 0, name: 'T-spin mini', term: 'T스핀 미니',
     why: ['A T-spin is a T piece that rotates into place with at least three of the four corners around its centre blocked. If the two corners on the side the T points to aren\'t both blocked, it only counts as a mini.',
           'A mini scores more than a plain single, but the real prize is the full T-spin.'],
     keys: 'Move the T to the left wall, <b>Down</b> to the floor, then <b>Up</b> to spin it in.',
@@ -232,11 +178,11 @@ const LESSONS = [
     win: 'MINI T-SPIN. Now for the full version.',
   },
   {
-    ch: 1, name: 'T-spin single', term: 'T스핀 싱글 (TSS)',
+    ch: 0, name: 'T-spin single', term: 'T스핀 싱글 (TSS)',
     why: ['A full T-spin that clears one line is a T-spin single. Here the middle row has a hole elsewhere, so only one row clears, but the spin still scores 800 points, eight times a plain single.',
           'The trick is to rotate the T into the slot from under the overhang, not to drop it in.'],
     keys: '<b>Z</b> to point the T left, <b>Down</b> to the bottom, then <b>Z</b> again.',
-    touch: 'Two-finger tap, slide down, two-finger tap again, flick down.',
+    touch: 'Two-finger tap, slide down, two-finger tap again.',
     goal: 'Spin the T into the slot for a T-spin single.',
     board: [E, E, E, E, E, E, E, 'xxx..xxxxx', 'xxx...xxx.', 'xxxx.xxxxx'],
     pieces: ['T'], check: 'spin', spin: 'full', lines: 1,
@@ -245,11 +191,11 @@ const LESSONS = [
     win: 'T-SPIN SINGLE.',
   },
   {
-    ch: 1, name: 'T-spin double', term: 'T스핀 더블 (TSD)',
+    ch: 0, name: 'T-spin double', term: 'T스핀 더블 (TSD)',
     why: ['The T-spin double is the most important attack in modern Tetris. Six pieces can set one up, while a Tetris needs ten, and it sends the same amount of garbage in battle. Korean players even joke that the game should be renamed "T-spin".',
           'Look for a slot with a roof over one corner. Lower the T next to the slot pointing at the roof, then rotate towards it.'],
     keys: '<b>Z</b> to point the T left, <b>Down</b> to the bottom, then <b>Z</b> again.',
-    touch: 'Two-finger tap, slide down, two-finger tap again, flick down.',
+    touch: 'Two-finger tap, slide down, two-finger tap again.',
     goal: 'Spin the T into the slot and clear two lines.',
     board: [E, E, E, E, E, E, E, 'xxx..xxxxx', 'xxx***xxxx', 'xxxx*xxxxx'],
     pieces: ['T'], check: 'spin', spin: 'full', lines: 2,
@@ -258,7 +204,7 @@ const LESSONS = [
     win: 'T-SPIN DOUBLE. 1,200 points, more than a Triple.',
   },
   {
-    ch: 1, name: 'T-spin triple', term: 'T스핀 트리플 (TST)',
+    ch: 0, name: 'T-spin triple', term: 'T스핀 트리플 (TST)',
     why: ['A T-spin triple uses the deepest kick in the rotation system: from flat, the T drops two rows while turning upright. It needs a deep, narrow hole with a roof on one side.',
           'Slide the T flat under the roof, then rotate towards the hole. The T falls straight down into it.'],
     keys: 'Move left, <b>Down</b> to the floor, <b>Right</b> under the roof, then <b>Z</b>.',
@@ -270,81 +216,39 @@ const LESSONS = [
     hints: { plain: 'That was a plain drop. Get the T lying flat under the roof first, then rotate left.', other: 'Not deep enough. The T must be flat and touching the roof before you rotate left.' },
     win: 'T-SPIN TRIPLE. 1,600 points, the biggest single move in the game.',
   },
-  {
-    ch: 1, name: 'T-spin drill', term: 'T스핀 연습', drill: 'tspin',
-    why: ['Real games don\'t hand you the same slot twice. This drill builds ten random T-spin singles, doubles and triples on either side of the board. Spot the slot type, then spin in.'],
-    keys: 'All keys work. The Slot box next to the board tells you which T-spin to do.',
-    touch: 'All gestures work.',
-    goal: 'Hit 10 random T-spins. A plain drop or the wrong spin counts as a miss.',
-    stars: ['Finish all 10', '8 or more hits', '10 hits in under 90 seconds'],
-  },
 
-  // ---------------- Attack ----------------
+  // ---------------- Advanced T-spins ----------------
   {
-    ch: 2, name: 'Back-to-back', term: '백투백 (B2B)',
-    why: ['Tetrises and T-spins are "difficult" clears. Do two in a row, with no plain clear in between, and the second one is a back-to-back: worth 1.5 times the points (and an extra garbage line in battle).',
-          'Here the I comes first, but taking the Tetris now would bury the T-spin slot. Hold the I, spin the T, then bring the I back.'],
-    keys: '<b>C</b> to hold, T-spin with <b>Z</b>, then hold again to swap the I back in.',
-    touch: 'Tap Hold, spin the T, then tap Hold again.',
-    goal: 'Do a T-spin double, then a Tetris, back-to-back.',
-    board: [E, E, E, 'xxx..xxxx.', 'xxx...xxxx', 'xxxx.xxxxx', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.', 'xxxxxxxxx.'],
-    pieces: ['I', 'T', 'O'], check: 'seq',
+    ch: 1, name: 'Fin TSD', term: '핀 TSD (Fin)',
+    why: ['The same deep kick that makes a T-spin triple works from the other direction. If the T is pointing down and you rotate it, the fifth kick test can drop it two rows into an upright slot. Players call this a Fin.',
+          'Here, get the T pointing down under the roof first, nudge it right, then rotate right. It drops into the deep slot and clears two lines.'],
+    keys: 'Move left and soft drop, <b>Z</b> twice to point the T down, <b>Right</b>, then <b>Up</b>.',
+    touch: 'Drag left, slide down, two two-finger taps, drag right, then tap.',
+    goal: 'Clear two lines with the Fin kick.',
+    board: [E, E, E, E, E, '....xxx..x', 'xx....x.xx', 'xxx...xxxx', 'xxxx..xxxx', 'xxxxx.xxxx'],
+    pieces: ['T'], check: 'spin', spin: 'full', lines: 2,
+    demo: ['left', 'soft', 'soft', 'soft', 'soft', 'ccw', 'soft', 'soft', 'ccw', 'right', 'cw', 'drop'],
+    hints: { plain: 'That was a plain drop. The T has to rotate into the bottom slot.', other: 'It spun, but not deep enough. Point the T down under the roof, move it one step right, then rotate right.' },
+    win: 'FIN T-SPIN DOUBLE. Reading kicks like this is what separates experts from good players.',
+  },
+  {
+    ch: 1, name: 'Double, then triple', term: 'DT포 원리',
+    why: ['DT stands for Double and Triple. The DT cannon is a famous opener that stacks a T-spin double on top of a T-spin triple: doing the double opens up the roof and hole the triple needs.',
+          'Both are difficult clears, so the triple also scores back-to-back (1.5 times the points). This board is the finished shape, ready to fire.'],
+    keys: 'First T: T-spin double with <b>Z</b>. Second T: slide under the roof and <b>Z</b> for the triple.',
+    touch: 'First T: two-finger taps for the double. Second T: drag under the roof, two-finger tap.',
+    goal: 'Do a T-spin double, then a T-spin triple, back-to-back.',
+    board: [E, E, E, '.....xxxxx', 'xxx...xxxx', 'xxxx.xxxxx', '......xxxx', 'xxxxx.xxxx', 'xxxx..xxxx', 'xxxxx.xxxx'],
+    pieces: ['T', 'T'], check: 'seq',
     seq: [
-      { ts: 'full', lines: 2, fail: 'The first clear must be the T-spin double. Hold the I so the T comes out first.' },
-      { lines: 4, b2b: true, fail: 'Now the Tetris: hold the O to get your I back, and drop it in the right-hand well.' },
+      { ts: 'full', lines: 2, fail: 'The first T has to be the T-spin double at the top. Point it left, soft drop, rotate left again.' },
+      { ts: 'full', lines: 3, b2b: true, fail: 'Now the triple: move left, soft drop, slide right under the roof, then rotate left.' },
     ],
-    demo: ['hold', 'ccw', 'softmax', 'ccw', 'drop', 'hold', 'cw', 'right', 'right', 'right', 'right', 'drop'],
-    win: 'BACK-TO-BACK TETRIS. Chaining difficult clears is how experts multiply their attack.',
+    demo: ['soft', 'soft', 'ccw', 'soft', 'soft', 'ccw', 'drop', 'left', 'softmax', 'right', 'ccw', 'drop'],
+    win: 'T-SPIN DOUBLE, then BACK-TO-BACK T-SPIN TRIPLE. 1,200 + 2,400 points from two T pieces.',
   },
   {
-    ch: 2, name: 'Combo (REN)', term: '렌 (REN) · 콤보',
-    why: ['A combo, called REN in Japan and Korea, is clearing lines with several pieces in a row. The first clear starts the chain, and every clear after it adds 1 to the combo.',
-          'This board is a 4-wide well: a gap four columns wide next to a tall stack. Every piece can clear a line if you keep three blocks at the bottom of the well.'],
-    keys: 'Place each piece so it finishes a row.',
-    touch: 'Place each piece so it finishes a row.',
-    goal: 'Clear a line with all 7 pieces in a row (6 combo).',
-    board: [E, E, W4, W4, W4, W4, W4, W4, W4, 'xxxxxxxx.x'],
-    pieces: ['T', 'I', 'L', 'J', 'S', 'O', 'Z'], check: 'ren', ren: 7,
-    demo: ["right","right","right","right","soft","soft","soft","soft","soft","soft","soft","soft","cw","drop","soft","soft","cw","soft","soft","soft","soft","cw","drop","right","right","soft","soft","soft","cw","drop","right","right","right","soft","soft","soft","soft","soft","soft","soft","cw","soft","cw","drop","right","right","soft","soft","soft","soft","soft","cw","drop","right","right","right","right","drop","right","right","right","soft","soft","soft","soft","soft","soft","soft","soft","cw","drop"],
-    fail: 'That piece didn\'t clear a line, so the combo broke. Keep exactly three blocks in the well.',
-    win: '6 COMBO. In battle, long combos send a pile of garbage even without Tetrises.',
-  },
-  {
-    ch: 2, name: 'Perfect clear', term: '퍼펙트 클리어 (퍼클)',
-    why: ['Clear every block on the board and you get a Perfect Clear, the biggest bonus in the game. It takes planning: you have to see where the next few pieces go before you place the first one.'],
-    keys: 'Check the Next queue before each move.',
-    touch: 'Check the Next queue before each move.',
-    goal: 'Use the three pieces to clear the whole board.',
-    board: [E, E, E, E, E, E, E, W4, W4, W4],
-    pieces: ['I', 'L', 'L'], check: 'pc',
-    demo: ['right', 'right', 'right', 'drop', 'right', 'right', 'right', 'right', 'drop', 'cw', 'cw', 'right', 'right', 'right', 'drop'],
-    win: 'PERFECT CLEAR.',
-  },
-  {
-    ch: 2, name: 'Perfect clear puzzle', term: '퍼클 퍼즐',
-    why: ['Harder: a 4×4 gap and four pieces, with only two ways to solve it. The last piece has to spin into place, so plan the whole thing before you start.',
-          'Spins aren\'t only for T pieces. S, Z, L and J pieces can also rotate into tight spots using the same kicks.'],
-    keys: 'Plan all four pieces first. The last one needs a spin.',
-    touch: 'Plan all four pieces first. The last one needs a spin.',
-    goal: 'Clear the whole board with J, L, S and Z.',
-    board: [E, E, E, E, E, E, W4, W4, W4, W4],
-    pieces: ['J', 'L', 'S', 'Z'], check: 'pc',
-    demo: ["right","right","soft","soft","soft","soft","soft","cw","drop","right","right","right","soft","soft","soft","soft","soft","soft","ccw","right","drop","right","right","right","right","drop","right","right","soft","soft","soft","soft","soft","soft","soft","ccw","right","ccw","drop"],
-    win: 'PERFECT CLEAR, finished with a Z-spin.',
-  },
-  {
-    ch: 2, name: '4-wide combo drill', term: '4와이드 렌', drill: 'combo',
-    why: ['An endless 4-wide well with random pieces. Keep the combo going as long as you can, and use Hold to save pieces that don\'t fit right now.',
-          'Tip: the three leftover blocks should always make a shape the next piece can finish a row with.'],
-    keys: 'All keys work, including Hold.',
-    touch: 'All gestures work, including Hold.',
-    goal: 'Build the longest combo you can.',
-    stars: ['4 combo', '8 combo', '12 combo'],
-  },
-
-  // ---------------- Openers ----------------
-  {
-    ch: 3, name: 'Opener TSD', term: '개막TSD',
+    ch: 1, name: 'Opener TSD', term: '개막TSD',
     why: ['An opener is a fixed way to stack your first bag of seven pieces. Experts memorise a few so they can attack within seconds. This one uses L, J, I, O, S and Z to build a T-spin double slot, then spins the T in.',
           'Each piece has an outline to match. Watch how the S becomes the roof of the slot.'],
     keys: 'Place each piece on its outline, then T-spin.',
@@ -364,6 +268,93 @@ const LESSONS = [
     demo: ['cw', 'left', 'drop', 'ccw', 'left', 'left', 'drop', 'right', 'right', 'right', 'drop', 'right', 'right', 'right', 'right', 'drop',
            'cw', 'right', 'right', 'drop', 'ccw', 'left', 'left', 'left', 'drop', 'cw', 'softmax', 'cw', 'drop'],
     win: 'OPENER TSD. Seven pieces, 1,200 points, and the leftover stack is still clean.',
+  },
+
+  // ---------------- Other spins ----------------
+  {
+    ch: 2, name: 'S-spin', term: 'S스핀',
+    why: ['Every piece can kick, not just T. Official scoring only rewards T-spins, but some modern games score all spins, and in every game a spin lets you fill holes that a plain drop can\'t reach.',
+          'Drop the S onto the stack, then rotate it twice. The second turn kicks it down into the notch.'],
+    keys: '<b>Down</b> to land the S, then <b>Up</b> twice.',
+    touch: 'Slide down, then tap twice.',
+    goal: 'Spin the S into the marked notch.',
+    board: ['..........', '..........', '..........', '..........', '..........', '..........', 'xx........', 'xx.....xxx', 'xxxxx**xxx', 'xxxx**.xxx'],
+    pieces: ['S'], check: 'target', fail: SPIN_FAIL,
+    demo: ['softmax', 'cw', 'cw', 'drop'],
+    win: 'S-SPIN. The kick moved the S down and left in one turn.',
+  },
+  {
+    ch: 2, name: 'Z-spin', term: 'Z스핀',
+    why: ['The Z is the mirror of the S, and so are its kicks. Here a ledge hangs over the gap, so the Z can\'t fall in. Land it next to the gap and rotate left twice to kick it under the ledge.'],
+    keys: '<b>Left</b>, <b>Down</b> to land, then <b>Z</b> twice.',
+    touch: 'Drag left, slide down, then two two-finger taps.',
+    goal: 'Spin the Z under the ledge into the marked spot.',
+    board: ['..........', '..........', '..........', '..........', '..........', '..........', 'xx....xx..', 'x**...xxxx', 'xx**xxxxxx', 'xx..xxxxxx'],
+    pieces: ['Z'], check: 'target', fail: SPIN_FAIL,
+    demo: ['left', 'softmax', 'ccw', 'ccw', 'drop'],
+    win: 'Z-SPIN.',
+  },
+  {
+    ch: 2, name: 'J-spin', term: 'J스핀',
+    why: ['L and J spins are the most useful non-T spins: they fill an L-shaped hole tucked under a roof. Rotating twice turns the J upside down, and the kick pulls it into the hole.'],
+    keys: '<b>Down</b> to land, then <b>Z</b> twice.',
+    touch: 'Slide down, then two two-finger taps.',
+    goal: 'Spin the J into the marked hole.',
+    board: ['..........', '..........', '..........', '..........', '..........', '..........', '..........', 'xxx.......', 'xx***xxxxx', 'xx..*xxxxx'],
+    pieces: ['J'], check: 'target', fail: SPIN_FAIL,
+    demo: ['softmax', 'ccw', 'ccw', 'drop'],
+    win: 'J-SPIN.',
+  },
+  {
+    ch: 2, name: 'L-spin', term: 'L스핀',
+    why: ['The same idea with an L, but with a soft drop between the two turns. Turn once, drop one more row, then turn again to kick the L under the block.'],
+    keys: '<b>Down</b> to land, <b>Z</b>, <b>Down</b> once more, then <b>Z</b>.',
+    touch: 'Slide down, two-finger tap, slide down a little, two-finger tap.',
+    goal: 'Spin the L into the marked spot.',
+    board: ['..........', '..........', '..........', '..........', '..........', '..........', '..........', '...x......', 'xx***.....', 'xx*xxxxxxx'],
+    pieces: ['L'], check: 'target', fail: SPIN_FAIL,
+    demo: ['softmax', 'ccw', 'softmax', 'ccw', 'drop'],
+    win: 'L-SPIN.',
+  },
+  {
+    ch: 2, name: 'I-spin', term: 'I스핀',
+    why: ['The I piece has its own kick table. Stood upright and turned again, it can slide sideways under a block and lie flat in a gap that is blocked from above.'],
+    keys: '<b>Down</b> to land, <b>Up</b>, <b>Down</b> once, then <b>Up</b> again.',
+    touch: 'Slide down, tap, slide down a little, tap again.',
+    goal: 'Spin the I flat into the marked gap.',
+    board: ['..........', '..........', '..........', '..........', '..........', '..........', '....x.....', 'xx****xxxx', 'xx..x.xxxx', 'xxxxx.xxxx'],
+    pieces: ['I'], check: 'target', fail: SPIN_FAIL,
+    demo: ['softmax', 'cw', 'soft', 'cw', 'drop'],
+    win: 'I-SPIN.',
+  },
+  {
+    ch: 2, name: 'Perfect clear puzzle', term: '퍼클 퍼즐',
+    why: ['A 4×4 gap and four pieces, with only two ways to solve it. The last piece has to spin into place, so plan the whole thing before you start. Clearing every block on the board is a Perfect Clear, the biggest bonus in the game.'],
+    keys: 'Plan all four pieces first. The last one needs a Z-spin.',
+    touch: 'Plan all four pieces first. The last one needs a Z-spin.',
+    goal: 'Clear the whole board with J, L, S and Z.',
+    board: [E, E, E, E, E, E, W4, W4, W4, W4],
+    pieces: ['J', 'L', 'S', 'Z'], check: 'pc',
+    demo: ["right","right","soft","soft","soft","soft","soft","cw","drop","right","right","right","soft","soft","soft","soft","soft","soft","ccw","right","drop","right","right","right","right","drop","right","right","soft","soft","soft","soft","soft","soft","soft","ccw","right","ccw","drop"],
+    win: 'PERFECT CLEAR, finished with a Z-spin.',
+  },
+
+  // ---------------- Drills ----------------
+  {
+    ch: 3, name: 'T-spin drill', term: 'T스핀 연습', drill: 'tspin',
+    why: ['Real games don\'t hand you the same slot twice. This drill builds ten random T-spin singles, doubles and triples on either side of the board. Spot the slot type, then spin in.'],
+    keys: 'All keys work. The Slot box next to the board tells you which T-spin to do.',
+    touch: 'All gestures work.',
+    goal: 'Hit 10 random T-spins. A plain drop or the wrong spin counts as a miss.',
+    stars: ['Finish all 10', '8 or more hits', '10 hits in under 90 seconds'],
+  },
+  {
+    ch: 3, name: 'All-spin drill', term: '올스핀 연습', drill: 'allspin',
+    why: ['Random stacks, random pieces. Each round marks a spot that only a spin can reach, with any of the seven pieces. Work out which way to turn and where the kick will send the piece.'],
+    keys: 'All keys work. Use Show this one if you get stuck.',
+    touch: 'All gestures work. Use Show this one if you get stuck.',
+    goal: 'Spin 10 pieces into their marked spots.',
+    stars: ['Finish all 10', '8 or more hits', '10 hits in under 2 minutes'],
   },
 ];
 
@@ -386,8 +377,8 @@ const palette = Object.values(COLOR);
 let VISIBLE = 10, ROWS = 12;
 let CELL = 30, NS = 14, compact = false;
 let save = { stars: {}, best: {} };
-try { save = Object.assign(save, JSON.parse(localStorage.getItem('tetris-course') || '{}')); } catch (e) {}
-const persist = () => { try { localStorage.setItem('tetris-course', JSON.stringify(save)); } catch (e) {} };
+try { save = Object.assign(save, JSON.parse(localStorage.getItem('tetris-spin-course') || '{}')); } catch (e) {}
+const persist = () => { try { localStorage.setItem('tetris-spin-course', JSON.stringify(save)); } catch (e) {} };
 
 let li = 0, L;
 let grid = null, targets = [], queue = [], piece = null, holdType = null, holdUsed = false;
@@ -395,6 +386,8 @@ let rotations = 0, inputs = 0, lockIndex = 0, lastRot = false, lastKick = 0, las
 let status = 'play';          // play | clearing | demo | demo-clearing | done
 let clearRows = [], clearT = 0, popups = [], flashes = [], pendingEv = null;
 let demoTimer = null, resetTimer = null, demoRunning = false;
+const GRAVITY = 1000, LOCK_DELAY = 500, MAX_RESETS = 15;
+let dropAcc = 0, lockT = 0, resets = 0, lowest = 0;
 let drill = null;
 
 const empty = () => Array(COLS).fill(null);
@@ -463,15 +456,15 @@ function openLesson(i) {
   $('how').innerHTML = isTouch ? L.touch : L.keys;
   renderStarsLine();
   $('next-btn').disabled = i === LESSONS.length - 1;
-  $('demo-btn').disabled = L.drill === 'combo';
+  $('demo-btn').disabled = false;
   $('demo-btn').textContent = L.drill ? 'Show this one' : 'Show me';
   grid = null; piece = null; targets = []; queue = [];
-  VISIBLE = L.drill === 'combo' ? 14 : 10;
+  VISIBLE = 10;
   ROWS = VISIBLE + HIDDEN;
   usedDemo = false;
   renderMenu();
   size();
-  setMsg(L.drill === 'finesse' && isTouch ? 'Tip: here finesse is scored on gestures. It is mostly a keyboard skill.' : '');
+  setMsg('');
   if (L.drill) startDrill(); else reset();
 }
 
@@ -518,9 +511,15 @@ function spawn(type) {
   if (!type) { piece = null; return; }
   piece = { type, r: 0, x: type === 'O' ? 4 : 3, y: 0 };
   lastRot = false; lastKick = 0;
+  dropAcc = 0; lockT = 0; resets = 0;
   if (collidesIn(grid, ROT[type][0], piece.x, piece.y)) { piece = null; return; }
   if (!collidesIn(grid, ROT[type][0], piece.x, 1)) piece.y = 1;
+  lowest = piece.y;
 }
+
+// moving or rotating a piece that is resting on the stack restarts its lock timer (up to 15 times)
+function moved() { if (piece && ground() && resets < MAX_RESETS) { resets++; lockT = 0; } }
+function descended() { if (piece.y > lowest) { lowest = piece.y; resets = 0; lockT = 0; } }
 
 const ground = () => collidesIn(grid, ROT[piece.type][piece.r], piece.x, piece.y + 1);
 
@@ -529,7 +528,7 @@ function doAction(a) {
   if (a === 'left' || a === 'right') {
     const dx = a === 'left' ? -1 : 1;
     if (collidesIn(grid, ROT[piece.type][piece.r], piece.x + dx, piece.y)) return false;
-    piece.x += dx; lastRot = false; return true;
+    piece.x += dx; lastRot = false; moved(); return true;
   }
   if (a === 'wallLeft' || a === 'wallRight') {
     const dx = a === 'wallLeft' ? -1 : 1; let moved = false;
@@ -541,11 +540,13 @@ function doAction(a) {
     const r = srsRotate(grid, piece, a === 'cw' ? 1 : -1);
     if (!r) return false;
     piece.x = r.x; piece.y = r.y; piece.r = r.r; lastRot = true; lastKick = r.kick; rotations++;
+    if (piece.y > lowest) descended();
+    moved();
     return true;
   }
   if (a === 'soft' || a === 'softmax') {
     if (ground()) return false;
-    piece.y++; lastRot = false; return true;
+    piece.y++; lastRot = false; descended(); return true;
   }
   if (a === 'drop') {
     let moved = false;
@@ -555,7 +556,7 @@ function doAction(a) {
     return true;
   }
   if (a === 'hold') {
-    if (holdUsed || (drill && drill.kind === 'finesse')) return false;
+    if (holdUsed || drill) return false;
     holdUsed = true;
     const t = piece.type;
     if (holdType) { const h = holdType; holdType = t; spawn(h); }
@@ -714,78 +715,28 @@ function startDrill() {
   clearTimeout(resetTimer);
   popups = []; flashes = []; clearRows = [];
   holdType = null; holdUsed = false; lastDifficult = false; combo = -1;
-  if (L.drill === 'finesse') drill = { kind: 'finesse', round: 0, total: 12, perfect: 0, missed: 0, bag: [] };
-  if (L.drill === 'tspin') drill = { kind: 'tspin', round: 0, total: 10, hits: 0, t0: 0 };
-  if (L.drill === 'combo') drill = { kind: 'combo', ren: 0, bag: [] };
+  drill = { kind: L.drill, round: 0, total: 10, hits: 0, t0: 0, secs: null };
   nextRound();
 }
 
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const bagPiece = d => { if (!d.bag.length) d.bag = shuffle(Object.keys(SHAPES)); return d.bag.pop(); };
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 
 function nextRound() {
   status = 'play'; inputs = 0; rotations = 0; lockIndex = 0;
   const d = drill;
-  if (d.kind === 'finesse') {
-    if (d.round >= d.total) return finishDrill();
-    grid = Array.from({ length: ROWS }, empty);
-    const type = bagPiece(d);
-    const spots = finesseTargets(type);
-    const pick = spots[Math.floor(Math.random() * spots.length)];
-    targets = pick.cells; d.optimal = isTouch ? pick.touch : pick.cost; d.solution = pick.path;
-    queue = []; spawn(type);
-  }
+  if (d.round >= d.total) return finishDrill();
+  if (d.round === 0) d.t0 = performance.now();
+  queue = []; holdType = null;
   if (d.kind === 'tspin') {
-    if (d.round >= d.total) return finishDrill();
-    if (d.round === 0) d.t0 = performance.now();
     const gen = genTSpin();
     grid = gen.g; targets = []; d.want = gen.want; d.label = gen.label; d.solution = gen.path;
-    queue = []; holdType = null; spawn('T');
+    spawn('T');
+  } else {
+    const gen = genAllSpin();
+    grid = gen.g; targets = gen.cells; d.label = gen.label; d.solution = gen.path;
+    spawn(gen.type);
   }
-  if (d.kind === 'combo') {
-    const rows = [E, E, E];
-    for (let i = 0; i < VISIBLE - 4; i++) rows.push(W4);
-    rows.push(['xxxxxxxx.x', 'xxxxxxx.xx', 'xxxxxx.xxx', 'xxxxxxxxx.'][rand(0, 3)]);
-    grid = gridFrom(rows).g; targets = [];
-    queue = []; for (let i = 0; i < 6; i++) queue.push(bagPiece(d));
-    spawn();
-  }
-}
-
-// Every distinct resting spot on an empty floor, with the fewest keyboard inputs
-// (holding a direction to reach the wall counts as one input).
-function finesseTargets(type) {
-  const g = Array.from({ length: ROWS }, empty);
-  const start = spawnPos(g, type);
-  const k = s => `${s.x},${s.r}`;
-  const q = [{ x: start.x, r: start.r, cost: 0, path: [] }], seen = new Set([k(q[0])]);
-  const res = new Map();
-  while (q.length) {
-    const s = q.shift();
-    let y = start.y; while (!collidesIn(g, ROT[type][s.r], s.x, y + 1)) y++;
-    const cells = pieceCells({ type, x: s.x, y, r: s.r });
-    const ck = cells.map(c => c.join(',')).sort().join(';');
-    const turns = s.path.filter(a => a === 'cw' || a === 'ccw').length;
-    const moved = s.path.some(a => a !== 'cw' && a !== 'ccw') ? 1 : 0;
-    if (!res.has(ck)) res.set(ck, { cells, cost: s.cost, path: [...s.path, 'drop'], touch: Math.min(turns, 2) + moved });
-    const nx = [];
-    for (const [dx, nm] of [[-1, 'left'], [1, 'right']])
-      if (!collidesIn(g, ROT[type][s.r], s.x + dx, start.y)) nx.push({ x: s.x + dx, r: s.r, nm });
-    for (const [dx, nm] of [[-1, 'wallLeft'], [1, 'wallRight']]) {
-      let x = s.x; while (!collidesIn(g, ROT[type][s.r], x + dx, start.y)) x += dx;
-      if (x !== s.x) nx.push({ x, r: s.r, nm });
-    }
-    for (const [d, nm] of [[1, 'cw'], [-1, 'ccw']]) {
-      const r = srsRotate(g, { type, x: s.x, y: start.y, r: s.r }, d);
-      if (r && r.y === start.y) nx.push({ x: r.x, r: r.r, nm });
-    }
-    for (const m of nx) {
-      const n = { x: m.x, r: m.r, cost: s.cost + 1, path: [...s.path, m.nm] };
-      if (!seen.has(k(n))) { seen.add(k(n)); q.push(n); }
-    }
-  }
-  return [...res.values()].filter(v => v.cost > 0);
 }
 
 // Random T-spin slot (single, double or triple) on either side; each one is checked by search before use.
@@ -821,59 +772,58 @@ function genTSpin() {
   return genTSpin();
 }
 
+// Random stack with an overhang, and a spot that only a spin can reach (any piece).
+// A spot counts only if the search finds it when the last move is a rotation, and never otherwise.
+function genAllSpin() {
+  const types = ['S', 'Z', 'J', 'L', 'I', 'T', 'S', 'Z', 'J', 'L'];
+  for (let attempt = 0; attempt < 400; attempt++) {
+    const type = types[rand(0, types.length - 1)];
+    const h = Array.from({ length: 10 }, () => rand(0, 4));
+    const rows = Array.from({ length: 5 }, (_, y) => Array.from({ length: 10 }, (_, x) => (5 - y) <= h[x] ? 'x' : '.'));
+    const ox = rand(0, 9), oy = rand(1, 3), ow = rand(1, 2);
+    for (let i = 0; i < ow && ox + i < 10; i++) rows[oy][ox + i] = 'x';
+    const rs = rows.map(r => r.join(''));
+    if (rs.some(r => !r.includes('.'))) continue;
+    const g = gridFrom([E, E, E, E, E, ...rs]).g;
+    const byRot = new Map(), plain = new Set();
+    for (const st of explore(g, type, spawnPos(g, type))) {
+      const cells = pieceCells({ type, x: st.x, y: st.y, r: st.r });
+      const k = cells.map(c => c.join(',')).sort().join(';');
+      if (!st.lr) { plain.add(k); continue; }
+      if (linesAfter(g, type, st) < 1) continue;
+      if (!byRot.has(k) || st.path.length < byRot.get(k).path.length) byRot.set(k, { cells, path: st.path });
+    }
+    const spins = [...byRot.entries()].filter(([k]) => !plain.has(k)).map(([, v]) => v);
+    if (!spins.length) continue;
+    spins.sort((a, b) => a.path.length - b.path.length);
+    return { g, type, cells: spins[0].cells, path: trimSoft(spins[0].path), label: type + '-spin' };
+  }
+  return genAllSpin();
+}
+
 function drillLock(ev) {
   const d = drill;
   const key = c => c.join(',');
-  if (d.kind === 'finesse') {
-    const hit = ev.cells.length === targets.length && ev.cells.every(c => targets.some(t => key(t) === key(c)));
-    if (demoRunning) {
-      demoRunning = false; $('caption').innerHTML = '';
-      setMsg(`Shortest: ${d.optimal} input${d.optimal > 1 ? 's' : ''}. Now a new one for you.`);
-    } else if (!hit) { d.missed++; setMsg('Missed the outline.', 'no'); }
-    else if (inputs <= d.optimal) { d.perfect++; setMsg(`Perfect: ${inputs} input${inputs > 1 ? 's' : ''}.`); }
-    else setMsg(`${inputs} inputs. The shortest is ${d.optimal}.`, 'no');
-    d.round++;
-    status = 'done';
-    resetTimer = setTimeout(nextRound, 700);
-  }
-  if (d.kind === 'tspin') {
-    const hit = ev.ts === 'full' && ev.n === d.want;
-    if (demoRunning) { demoRunning = false; $('caption').innerHTML = ''; setMsg('Your turn on the next one.'); }
-    else if (hit) { d.hits++; setMsg(`Hit: ${d.label}.`); }
-    else setMsg(ev.ts ? `Spun, but that wasn't a ${d.label}.` : `Plain drop. That slot was a ${d.label}.`, 'no');
-    d.round++;
-    status = 'done';
-    resetTimer = setTimeout(nextRound, 800);
-  }
-  if (d.kind === 'combo') {
-    if (ev.n < 1) {
-      status = 'done';
-      const best = Math.max(save.best.combo || 0, d.ren);
-      save.best.combo = best; persist();
-      award(d.ren >= 12 ? 3 : d.ren >= 8 ? 2 : d.ren >= 4 ? 1 : 0);
-      setMsg(`Combo over at ${d.ren}. Best: ${best}. Press Restart to go again.`, d.ren >= 4 ? '' : 'no');
-      return;
-    }
-    d.ren = Math.max(0, ev.combo);
-    queue.push(bagPiece(d));
-    spawn();
-    if (!piece) { status = 'done'; setMsg('Topped out.'); }
-  }
+  let hit;
+  if (d.kind === 'tspin') hit = ev.ts === 'full' && ev.n === d.want;
+  else hit = ev.cells.length === targets.length && ev.cells.every(c => targets.some(t => key(t) === key(c)));
+  if (demoRunning) { demoRunning = false; $('caption').innerHTML = ''; setMsg('That one was a demo. Your turn on the next one.'); }
+  else if (hit) { d.hits++; setMsg(`Hit: ${d.label}.`); }
+  else if (d.kind === 'tspin') setMsg(ev.ts ? `Spun, but that wasn't a ${d.label}.` : `Plain drop. That slot was a ${d.label}.`, 'no');
+  else setMsg('Missed the marked spot. Look for where the kick would send the piece.', 'no');
+  d.round++;
+  status = 'done'; targets = [];
+  resetTimer = setTimeout(nextRound, 800);
 }
 
 function finishDrill() {
   const d = drill;
   status = 'done'; piece = null; targets = [];
-  if (d.kind === 'finesse') {
-    award(d.perfect === d.total ? 3 : d.perfect >= 9 ? 2 : 1);
-    setMsg(`Done: ${d.perfect} of ${d.total} perfect${d.missed ? `, ${d.missed} missed` : ''}. Press Restart to go again.`);
-  }
-  if (d.kind === 'tspin') {
-    const secs = (performance.now() - d.t0) / 1000;
-    d.secs = secs;
-    award(d.hits === d.total && secs < 90 ? 3 : d.hits >= 8 ? 2 : 1);
-    setMsg(`Done: ${d.hits} of ${d.total} T-spins in ${secs.toFixed(0)} s. Press Restart to go again.`);
-  }
+  const secs = (performance.now() - d.t0) / 1000;
+  d.secs = secs;
+  const limit = d.kind === 'tspin' ? 90 : 120;
+  award(d.hits === d.total && secs < limit ? 3 : d.hits >= 8 ? 2 : 1);
+  setMsg(`Done: ${d.hits} of ${d.total} in ${secs.toFixed(0)} s. Press Restart to go again.`);
 }
 
 // =====================================================================
@@ -886,7 +836,6 @@ function stopDemo() {
 }
 
 function runDemo() {
-  if (L.drill === 'combo') return;
   if (L.drill && (status !== 'play' || !piece)) return;
   stopDemo();
   usedDemo = true;
@@ -931,12 +880,7 @@ function frame(t) {
   if (status === 'clearing' || status === 'demo-clearing') {
     clearT -= dt;
     if (clearT <= 0) {
-      const wellRow = () => [0, 1, 2, 3, 4, 5].map(x => palette[(x * 3 + rand(0, 6)) % 7]).concat([null, null, null, null]);
-      for (const y of clearRows) {
-        grid.splice(y, 1);
-        if (drill && drill.kind === 'combo') { grid.splice(HIDDEN + 3, 0, wellRow()); grid[HIDDEN + 2] = grid[HIDDEN + 2] || empty(); }
-        else grid.unshift(empty());
-      }
+      for (const y of clearRows) { grid.splice(y, 1); grid.unshift(empty()); }
       clearRows = [];
       status = status === 'demo-clearing' ? 'demo' : 'play';
       afterLock();
@@ -952,6 +896,19 @@ function frame(t) {
     if (held.soft) { softT += dt; while (softT >= 45) { softT -= 45; doAction('soft'); } }
   }
 
+  // gravity and lock delay, so a piece that lands locks by itself (paused during demos)
+  if (status === 'play' && piece) {
+    dropAcc += dt;
+    while (dropAcc >= GRAVITY) {
+      dropAcc -= GRAVITY;
+      if (!ground()) { piece.y++; lastRot = false; descended(); } else { dropAcc = 0; break; }
+    }
+    if (ground()) {
+      lockT += dt;
+      if (lockT >= LOCK_DELAY || resets >= MAX_RESETS) lock();
+    }
+  }
+
   hud();
   draw();
   requestAnimationFrame(frame);
@@ -960,13 +917,12 @@ function frame(t) {
 function hud() {
   const d = drill;
   let h = '';
-  if (d && d.kind === 'finesse') h = `<div class="label">Round</div><div class="v">${Math.min(d.round + 1, d.total)}/${d.total}</div><div class="label">Perfect</div><div class="v">${d.perfect}</div><div class="label">Inputs</div><div class="v">${inputs}</div>`;
-  if (d && d.kind === 'tspin') {
+  if (d) {
     const secs = d.secs != null ? d.secs : d.t0 ? (performance.now() - d.t0) / 1000 : 0;
-    h = `<div class="label">Slot</div><div class="v" style="font-size:14px;line-height:1.3">${d.label || ''}</div><div class="label">Round</div><div class="v">${Math.min(d.round + 1, d.total)}/${d.total}</div><div class="label">Hits</div><div class="v">${d.hits}</div><div class="label">Time</div><div class="v">${secs.toFixed(0)}</div>`;
-  }
-  if (d && d.kind === 'combo') h = `<div class="label">Combo</div><div class="v">${d.ren}</div><div class="label">Best</div><div class="v">${Math.max(save.best.combo || 0, d.ren)}</div>`;
-  if (!d && L && L.demo) h = `<div class="label">Inputs</div><div class="v">${inputs}</div><div class="label">Par</div><div class="v">${parOf(L)}</div>`;
+    h = `<div class="label">${d.kind === 'tspin' ? 'Slot' : 'Piece'}</div><div class="v" style="font-size:14px;line-height:1.3">${d.label || ''}</div>` +
+        `<div class="label">Round</div><div class="v">${Math.min(d.round + 1, d.total)}/${d.total}</div>` +
+        `<div class="label">Hits</div><div class="v">${d.hits}</div><div class="label">Time</div><div class="v">${secs.toFixed(0)}</div>`;
+  } else if (L && L.demo) h = `<div class="label">Inputs</div><div class="v">${inputs}</div><div class="label">Par</div><div class="v">${parOf(L)}</div>`;
   const el = $('hud'); if (el._h !== h) { el.innerHTML = h; el._h = h; }
 }
 
@@ -1048,7 +1004,7 @@ document.addEventListener('keydown', e => {
     held[a] = 1; dasDir = a === 'left' ? -1 : 1; dasT = 0; arrT = 0;
     act(a);
   } else if (a === 'soft') { held.soft = 1; softT = 0; act('soft'); }
-  else act(a, !(a === 'drop' && drill && drill.kind === 'finesse'));
+  else act(a);
 });
 document.addEventListener('keyup', e => {
   const a = KEYMAP[e.code];
